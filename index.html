@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pholio — Organize before you shoot</title>
+<meta name="description" content="Pholio is the iPhone camera that picks the album before you press the shutter. Every photo lands exactly where it belongs — in your real Apple Photos library.">
+<meta property="og:title" content="Pholio — Organize before you shoot">
+<meta property="og:description" content="The iPhone camera that files every photo into the right album as you take it — straight into your real Apple Photos library.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://pholio.cam/assets/hero-v5-poster.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="assets/appicon-180.png">
+<link rel="apple-touch-icon" href="assets/appicon-180.png">
+<style>
+/* ============================================================
+   PHOLIO LANDING v3 — Figma "Index" (PdLaFIM7SFgctlvNKkWoP4) + v2 demos
+   ============================================================ */
+@font-face{ font-family:"EB Garamond"; font-weight:500; font-style:normal; font-display:swap; src:url("assets/fonts/EBGaramond-Medium.ttf") format("truetype"); }
+@font-face{ font-family:"EB Garamond"; font-weight:600; font-style:normal; font-display:swap; src:url("assets/fonts/EBGaramond-SemiBold.ttf") format("truetype"); }
+@font-face{ font-family:"EB Garamond"; font-weight:700; font-style:normal; font-display:swap; src:url("assets/fonts/EBGaramond-Bold.ttf") format("truetype"); }
+@font-face{ font-family:"EB Garamond"; font-weight:500; font-style:italic; font-display:swap; src:url("assets/fonts/EBGaramond-MediumItalic.ttf") format("truetype"); }
+@font-face{ font-family:"EB Garamond"; font-weight:600; font-style:italic; font-display:swap; src:url("assets/fonts/EBGaramond-SemiBoldItalic.ttf") format("truetype"); }
+
+:root{
+  --bg:            #000000;
+  --folder:        #1f1b1f;
+  --folder-back:   #141214;
+  --orange:        #E97344;
+  --orange-dark:   #BD491A;
+  --text:          #f5f5f4;
+  --text-2:        rgba(255,255,255,.62);
+  --text-3:        rgba(255,255,255,.46);
+  --hairline:      rgba(255,255,255,.12);
+
+  --font-display:  "EB Garamond", Georgia, "Times New Roman", serif;
+  --font-sans:     -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --fs-body:   17px;
+  --fs-lg:     21px;
+  --fs-h2:     clamp(36px, 5vw, 56px);
+  --fs-serif:  clamp(40px, 5.2vw, 64px);
+
+  --r-card:    34px;
+  --r-inner:   22px;
+  --r-folder:  clamp(28px, 4.3vw, 64px);
+
+  --tab-h:     56px;
+  --tab-w:     clamp(176px, 19vw, 260px);
+
+  /* Apple curves: one to settle, one quick exit */
+  --ease-out:     cubic-bezier(.32, .72, 0, 1);
+  --ease-exit:    cubic-bezier(.23, 1, .32, 1);
+  --ease-spring:  cubic-bezier(.34, 1.25, .5, 1);
+  --ease-in:      cubic-bezier(.4, 0, 1, 1);
+
+  --section-pad: clamp(96px, 14vh, 180px);
+  --content-w:   1200px;
+
+  accent-color:var(--orange);
+  caret-color:var(--orange);
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; }
+html{
+  scroll-behavior:smooth; overflow-x:clip; scrollbar-color:rgba(255,255,255,.25) #0a0a0b;
+  -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
+}
+html, body{ background:var(--bg); }
+body{
+  font-family:var(--font-sans); font-size:var(--fs-body); line-height:1.5;
+  color:var(--text); -webkit-font-smoothing:antialiased; overflow-x:clip;
+}
+body::-webkit-scrollbar{ width:11px; background:#0a0a0b; }
+body::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.22); border-radius:6px; border:2px solid #0a0a0b; }
+img, video{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+button{ font:inherit; color:inherit; background:none; border:none; cursor:pointer; }
+button, a, [role="button"], [role="tab"], [role="slider"]{ touch-action:manipulation; -webkit-touch-callout:none; }
+button, [role="button"]{ user-select:none; -webkit-user-select:none; }
+::selection{ background:rgba(233,115,68,.35); }
+
+.wrap{ width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto; }
+
+h1,h2,h3{ font-family:var(--font-sans); font-weight:600; line-height:1.05; letter-spacing:-.022em; }
+h2{ font-size:var(--fs-h2); }
+h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; letter-spacing:-.01em; }
+.serif-h{ font-family:var(--font-display); font-weight:700; font-size:var(--fs-serif); letter-spacing:-.004em; line-height:1.14; }
+.oneliner{ font-size:var(--fs-lg); color:var(--text-2); max-width:30em; }
+
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:48px; padding:0 22px; border-radius:999px;
+  font-size:15px; font-weight:600; color:#f5f5f4; white-space:nowrap;
+  transition:transform .16s var(--ease-out), filter .2s, background .2s;
+}
+.btn:active{ transform:scale(.97); }
+.btn-orange{ background:var(--orange); box-shadow:0 8px 40px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.28); }
+.btn-ghost{ border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.06); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); }
+.btn:focus-visible, a:focus-visible, button:focus-visible, [tabindex]:focus-visible{ outline:2px solid var(--orange); outline-offset:3px; }
+
+.store-mark{ display:inline-flex; align-items:center; gap:14px; text-align:left; user-select:none; -webkit-user-select:none; }
+.store-mark svg{ flex:none; }
+.store-mark .sb-top{ display:block; font-size:11.5px; font-weight:500; color:var(--text-2); letter-spacing:.02em; line-height:1.25; }
+.store-mark .sb-bottom{ display:block; font-size:21px; font-weight:600; letter-spacing:-.01em; line-height:1.15; color:#fff; }
+.store-badge{
+  display:inline-flex; align-items:center; gap:12px; padding:12px 22px 12px 18px; border-radius:14px;
+  background:#0b0b0c; border:1px solid rgba(255,255,255,.32); box-shadow:0 14px 44px rgba(0,0,0,.5);
+  text-align:left; user-select:none; -webkit-user-select:none;
+}
+.store-badge svg{ flex:none; }
+.store-badge .sb-top{ display:block; font-size:11.5px; font-weight:500; color:var(--text-2); line-height:1.25; }
+.store-badge .sb-bottom{ display:block; font-size:21px; font-weight:600; letter-spacing:-.01em; line-height:1.15; color:#fff; }
+
+.reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s var(--ease-out), transform .7s var(--ease-out); }
+.reveal.in{ opacity:1; transform:none; }
+.reveal[data-delay="1"]{ transition-delay:.07s; }
+.reveal[data-delay="2"]{ transition-delay:.14s; }
+
+/* ============================================================ NAV — floating pill (Figma) */
+.nav{
+  position:fixed; top:max(clamp(12px, 3.6vh, 38px), env(safe-area-inset-top)); left:50%; transform:translateX(-50%); z-index:100;
+  width:min(780px, calc(100% - 24px)); height:60px; border-radius:999px;
+  display:flex; align-items:center; gap:24px; padding:0 8px 0 20px;
+  background:rgba(0,0,0,.55);
+  -webkit-backdrop-filter:blur(20px) saturate(1.5); backdrop-filter:blur(20px) saturate(1.5);
+  border:1px solid rgba(255,255,255,.08);
+  transition:top .4s var(--ease-out), background-color .4s;
+}
+.nav.scrolled{ top:max(12px, env(safe-area-inset-top)); background:rgba(0,0,0,.72); }
+.nav-brand{ display:flex; align-items:center; gap:10px; font-weight:600; font-size:18px; }
+.nav-brand img{ width:30px; height:30px; border-radius:8px; }
+.nav-links{ display:flex; gap:28px; margin-inline:auto; }
+.nav-links a{ display:inline-flex; align-items:center; min-height:44px; font-size:14px; color:rgba(255,255,255,.8); transition:color .2s; }
+.nav-cta{
+  height:36px; padding:0 18px; font-size:14px; font-weight:600; border-radius:999px;
+  display:inline-flex; align-items:center; background:var(--orange-dark); color:#fff;
+  transition:transform .16s var(--ease-out), filter .2s;
+}
+.nav-cta:active{ transform:scale(.97); }
+@media (max-width:720px){ .nav-links{ display:none; } .nav-cta{ margin-left:auto; } }
+
+/* ============================================================ HERO — full-screen film, copy bottom-left (Figma) */
+.hero{ position:relative; min-height:100svh; display:flex; align-items:flex-end; overflow:hidden; background:#000; }
+.hero-media{ position:absolute; inset:0; will-change:transform; }
+.hero-media video{ width:100%; height:100%; object-fit:cover; }
+.hero-scrim{ position:absolute; inset:0; background:linear-gradient(to top, #110f0d 1.6%, rgba(0,0,0,.33) 12%, rgba(0,0,0,0) 42%); }
+.hero-content{
+  position:relative; z-index:2; will-change:transform, opacity; width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto;
+  padding:0 0 clamp(40px, 6vh, 64px);
+  display:flex; flex-direction:column; align-items:flex-start; gap:8px;
+}
+.hero h1{ font-family:var(--font-display); font-weight:700; font-size:clamp(40px, 4.6vw, 64px); line-height:1.14; letter-spacing:-.03em; text-wrap:balance; }
+.hero .oneliner{ font-size:21px; font-weight:600; color:var(--text-2); max-width:34em; }
+.hero-ctas{ display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-top:20px; min-height:48px; }
+.hero-plans{ font-size:14px; color:var(--text-3); margin-top:6px; }
+
+/* ============================================================ HIGHLIGHTS — a scroll-driven folder; one phone, four chapters */
+.hl{ position:relative; background:linear-gradient(to top, #000 0%, #110f0d 96%); }
+.hl-track{ position:relative; height:calc(100svh + 190svh); }
+.hl-stage{
+  position:sticky; top:0; height:100svh;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(56px, 6.5vh, 84px);
+  padding:clamp(80px, 11vh, 124px) 0 clamp(20px, 4vh, 52px);
+}
+.hl-title{ width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto; flex:none; }
+.folder{
+  position:relative; width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto;
+  padding-top:var(--tab-h); flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
+  user-select:none; -webkit-user-select:none;
+}
+.folder-back{
+  position:absolute; left:0; right:0; top:calc(var(--tab-h) - 34px); height:90px;
+  background:var(--folder-back); border-radius:var(--r-folder) var(--r-folder) 0 0;
+}
+.folder-tabs{ position:absolute; top:0; left:clamp(14px, 3.4vw, 48px); right:0; height:var(--tab-h); z-index:2; }
+.tab-measure{ position:absolute; visibility:hidden; pointer-events:none; width:var(--tab-w); height:var(--tab-h); }
+/* ribbons grow and slide continuously with the scroll; only transform moves.
+   JS owns their transform in every mode; no CSS transition may fight the drivers.
+   (No backdrop-filter here: Safari can't clip it to the ribbon shape.) */
+.ftab{
+  position:absolute; left:0; bottom:0; width:var(--tab-w); height:var(--tab-h);
+  transform-origin:left bottom; will-change:transform;
+  clip-path:polygon(0 0, 76.2% 0, 83% 10%, 88.5% 35%, 92.5% 65%, 96.5% 90%, 100% 100%, 0 100%);
+}
+.ftab svg{
+  position:absolute; inset:0; width:100%; height:100%;
+  transform-origin:left bottom;
+  transition:transform 120ms var(--ease-out);
+}
+.ftab:active svg{ transform:scale(.97); }
+.ftab:focus-visible{ outline:none; }
+.ftab-label{
+  position:absolute; left:0; bottom:9px; z-index:31; pointer-events:none;
+  display:flex; flex-direction:column; align-items:flex-start; gap:6px;
+  font-size:13px; font-weight:600; letter-spacing:0; color:rgba(24,13,7,.9);
+  white-space:nowrap; will-change:transform, opacity;
+}
+.ftab-label .txt{ display:block; overflow:hidden; text-overflow:clip; }
+.ftab:focus-visible + .ftab-label .txt, .ftab-label.focused .txt{ text-decoration:underline; text-underline-offset:3px; }
+.tab-rule{ width:44px; height:4px; border-radius:2px; background:rgba(24,13,7,.85); transform-origin:left; }
+
+.folder-body{
+  position:relative; z-index:3; flex:0 1 auto; min-height:0;
+  aspect-ratio:1200/650; width:100%; max-height:100%;
+  background:var(--folder); border-radius:var(--r-folder);
+  overflow:hidden; box-shadow:0 40px 100px rgba(0,0,0,.55);
+}
+.folder-tint{
+  position:absolute; inset:0 0 auto 0; height:220px; z-index:0; pointer-events:none;
+  opacity:0; will-change:opacity;
+  -webkit-mask:linear-gradient(#000, transparent); mask:linear-gradient(#000, transparent);
+}
+.folder-grid{
+  position:relative; z-index:1; height:100%;
+  padding:clamp(20px, 3vw, 40px) 0;
+  container-type:size;
+}
+/* the three copy blocks cross-dissolve; each sits where the user's frame puts it */
+.hl-copy{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+.hl-copy article{
+  position:absolute; top:0; bottom:0;
+  display:flex; flex-direction:column; justify-content:center;
+  will-change:transform, opacity;
+}
+#fs-bar{ left:57%; right:clamp(24px, 5vw, 72px); }
+#fs-widget{ left:60%; right:clamp(24px, 5vw, 72px); padding-top:16%; }
+#fs-gallery{ left:clamp(28px, 6.5vw, 96px); width:min(32%, 15em); }
+.hl-copy h3, .hl-copy p{
+  font-size:clamp(19px, 1.75vw, 25px); font-weight:600;
+  letter-spacing:-.015em; line-height:1.32; text-wrap:pretty; max-width:15em;
+}
+.hl-copy h3{ color:var(--text); }
+.hl-copy p{ margin-top:0; color:var(--text-2); }
+/* the small accessory above each block: pill / iOS mark / Lock Screen controls */
+.hl-acc{ display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.acc-pill{
+  display:inline-flex; align-items:center; gap:7px; padding:7px 13px; border-radius:999px;
+  background:rgba(0,0,0,.38); border:1px solid rgba(255,255,255,.28);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  font-size:12px; font-weight:600; color:#fff;
+  box-shadow:0 6px 18px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);
+}
+.acc-ios{ display:inline-flex; align-items:center; gap:7px; font-size:20px; font-weight:600; color:var(--text); }
+.acc-ios svg{ width:16px; height:auto; display:block; }
+/* Lock Screen controls: each SVG is a 42px circle padded for its shadow; the box is the circle, the image overhangs */
+.acc-ctl{ position:relative; flex:none; width:42px; height:42px; }
+.acc-ctl img{ position:absolute; max-width:none; height:auto; display:block; }
+.acc-ctl-lantern img{ width:240.476%; left:-69.166%; top:-55.334%; }  /* 101-unit canvas, circle at 29.05, 23.24 */
+.acc-ctl-pholio  img{ width:273.810%; left:-85.714%; top:-76.190%; }  /* 115-unit canvas, circle at 36, 32 */
+
+/* one full-folder stage; the mockup renders cross-dissolve in place */
+.hl-phone{ position:absolute; inset:0; will-change:transform; }
+.hl-mocks{ position:absolute; inset:0; }
+.hl-screens{ position:absolute; inset:0; z-index:1; }
+.hl-screen{ position:absolute; inset:0; opacity:0; will-change:opacity, transform; display:flex; }
+.hl-mock{ object-fit:contain; user-select:none; -webkit-user-select:none; }
+/* slide 1 — the close-up bleeds off the folder's bottom-left (JS measures --bleed) */
+.hl-screen:nth-child(1){ justify-content:flex-start; align-items:flex-end; padding-left:2%; }
+.hl-screen:nth-child(1) .hl-mock{
+  height:88.5%; max-width:52%; object-position:left bottom;
+  transform:translateY(26px);
+}
+/* slide 2 — the triple fan on the right */
+.hl-screen:nth-child(2){ justify-content:flex-end; align-items:center; padding-right:4%; }
+.hl-screen:nth-child(2) .hl-mock{ height:97%; max-width:56%; }
+/* slide 3 — the hand enters low from the left, wrist bleeding off the corner */
+.hl-screen:nth-child(3){ justify-content:flex-start; align-items:flex-end; }
+.hl-screen:nth-child(3) .hl-mock{
+  height:117%; max-width:66%; margin-left:-2%; object-position:left bottom;
+  transform:translateY(26px);
+}
+
+/* chapter 3 — the Lock Screen, and the app launching out of its control */
+
+@media (max-width:900px){
+  :root{ --tab-w:clamp(104px, 30vw, 150px); --tab-h:46px; }
+  .hl-track{ height:auto; }
+  .hl-stage{ position:static; height:auto; padding:var(--section-pad) 0; gap:26px; }
+  .hl-title{ align-self:flex-start; }
+  .folder{ display:block; }
+  .ftab-label{ font-size:12px; bottom:7px; gap:5px; }
+  .tab-rule{ width:34px; }
+  .folder-body{ min-height:0; aspect-ratio:auto; max-height:none; }
+  .folder-grid{
+    height:auto; padding:34px 24px 0; container-type:normal;
+  }
+  .hl-copy{ position:relative; inset:auto; display:grid; pointer-events:auto; }
+  .hl-copy article{ position:static; grid-area:1/1; display:block; width:auto; max-width:none; }
+  #fs-bar, #fs-widget, #fs-gallery{ left:auto; right:auto; width:auto; }
+  .hl-copy h3, .hl-copy p{ font-size:19px; max-width:none; }
+  .hl-copy h3{ font-size:25px; }
+  .hl-copy p{ font-size:16px; }
+  .hl-phone{ height:auto; }
+  .hl-phone{ position:relative; inset:auto; height:min(96vw, 440px); margin-top:16px; }
+  .hl-screen:nth-child(1){ padding-left:0; }
+  .hl-screen:nth-child(2){ justify-content:center; padding-right:0; }
+  .hl-screen:nth-child(3){ justify-content:center; }
+  .hl-screen:nth-child(3) .hl-mock{ margin-left:0; }
+}
+.vf-chip.show{ opacity:1; }
+
+/* ============================================================ iPHONE — the app's own mockup (orange rim, status bar) */
+.iphone{
+  --pw:340px;
+  position:relative; width:var(--pw); aspect-ratio:430/932; flex:none;
+  border-radius:calc(var(--pw) * .17);
+  background:linear-gradient(160deg, #f2a468 0%, #c2602f 38%, #a24a1f 62%, #e07a3f 100%);
+  padding:calc(var(--pw) * .007);
+  box-shadow:0 0 0 1px rgba(0,0,0,.6), 0 50px 120px rgba(0,0,0,.65), 0 12px 30px rgba(0,0,0,.4);
+  user-select:none; -webkit-user-select:none;
+}
+.iphone::before{
+  content:""; position:absolute; left:calc(var(--pw) * -.006); top:0; bottom:0; width:calc(var(--pw) * .006);
+  background:
+    linear-gradient(#c96a37, #c96a37) 0 16% / 100% 3.2% no-repeat,
+    linear-gradient(#c96a37, #c96a37) 0 22.5% / 100% 6% no-repeat,
+    linear-gradient(#c96a37, #c96a37) 0 30.5% / 100% 6% no-repeat;
+  border-radius:2px 0 0 2px;
+}
+.iphone::after{
+  content:""; position:absolute; right:calc(var(--pw) * -.006); top:25%; width:calc(var(--pw) * .006); height:10%;
+  background:#c96a37; border-radius:0 2px 2px 0;
+}
+.ip-bezel{ height:100%; border-radius:calc(var(--pw) * .164); background:#050505; padding:calc(var(--pw) * .013); }
+.ip-screen{ position:relative; height:100%; border-radius:calc(var(--pw) * .152); overflow:hidden; background:#000; }
+.ip-island{ position:absolute; top:calc(var(--pw) * .03); left:50%; transform:translateX(-50%); z-index:9; width:31%; height:calc(var(--pw) * .074); border-radius:999px; background:#000; }
+.ip-status{
+  position:absolute; top:calc(var(--pw) * .036); left:0; right:0; z-index:8;
+  display:flex; justify-content:space-between; align-items:center; padding:0 calc(var(--pw) * .085);
+  font-size:calc(var(--pw) * .046); font-weight:600; letter-spacing:0; color:#fff; pointer-events:none;
+}
+.ip-status .st-icons{ display:flex; gap:calc(var(--pw) * .016); align-items:center; }
+.ip-status svg{ height:calc(var(--pw) * .034); width:auto; display:block; }
+.ip-home{ position:absolute; bottom:calc(var(--pw) * .022); left:50%; transform:translateX(-50%); z-index:9; width:36%; height:calc(var(--pw) * .013); border-radius:999px; background:#fff; opacity:.92; }
+
+/* — camera screen — */
+.cam-screen{ position:absolute; inset:0; }
+.mp-flash{ position:absolute; left:9%; top:9.4%; z-index:6; color:#fff; width:calc(var(--pw) * .04); height:auto; }
+/* one-line tip beside the flash icon, shown once the slider coach is done */
+.mp-tip{
+  position:absolute; z-index:6; top:9.4%; left:calc(9% + var(--pw) * .065); right:5%; margin:0;
+  font-size:calc(var(--pw) * .029); font-weight:500; line-height:calc(var(--pw) * .04);
+  color:rgba(255,255,255,.72); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  opacity:0; transition:opacity .3s ease .15s; pointer-events:none;
+}
+.mp-tip.show{ opacity:1; }
+.mp-top{ position:absolute; top:12.4%; left:0; right:0; z-index:6; display:flex; justify-content:center; }
+.mock-pill{
+  display:inline-flex; align-items:center; gap:calc(var(--pw) * .024);
+  padding:calc(var(--pw) * .028) calc(var(--pw) * .05); border-radius:999px;
+  background:rgba(0,0,0,.38);
+  -webkit-backdrop-filter:blur(14px) saturate(1.4); backdrop-filter:blur(14px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.28);
+  box-shadow:0 8px 24px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.16);
+  cursor:grab; touch-action:pan-x; will-change:transform;
+  transition:transform .3s var(--ease-out);
+}
+.mock-pill.dragging{ transition:none; cursor:grabbing; }
+.mock-pill svg{ flex:none; filter:drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+.mock-pill .ic-folder{ width:calc(var(--pw) * .04); height:auto; }
+.mock-pill .ic-chev{ width:calc(var(--pw) * .03); height:auto; }
+.pill-label-clip{ overflow:hidden; min-width:calc(var(--pw) * .2); text-align:center; }
+.pill-label{ display:inline-block; font-size:calc(var(--pw) * .042); font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.55); will-change:transform, opacity; white-space:nowrap; }
+.mp-vf{ position:absolute; top:18%; bottom:24.5%; left:0; right:0; overflow:hidden; }
+.vf-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; will-change:transform, opacity; }
+.vf-blur{
+  position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  filter:blur(9px); transform:scale(1.06); opacity:0; transition:opacity .45s ease;
+  -webkit-mask:radial-gradient(72% 58% at 50% 52%, transparent 40%, #000 78%);
+  mask:radial-gradient(72% 58% at 50% 52%, transparent 40%, #000 78%);
+}
+.vf-flash{ position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; transition:opacity .12s ease-out; }
+.vf-flash.on{ opacity:1; transition:none; }
+.iphone.portrait .vf-blur{ opacity:1; }
+.vf-chip{
+  position:absolute; z-index:6; left:50%; transform:translateX(-50%);
+  padding:calc(var(--pw) * .016) calc(var(--pw) * .036); border-radius:999px;
+  font-size:calc(var(--pw) * .034); font-weight:600; color:#fff;
+  background:rgba(0,0,0,.42); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.26); opacity:0; transition:opacity .3s ease;
+}
+.f-chip{ bottom:27%; }
+.rec-chip{ top:19.6%; display:inline-flex; align-items:center; gap:6px; }
+.rec-chip i{ width:7px; height:7px; border-radius:50%; background:#ff453a; }
+.iphone.portrait .f-chip{ opacity:1; }
+.iphone.video .rec-chip{ opacity:1; }
+.mp-bottom{ position:absolute; left:0; right:0; bottom:0; height:24.5%; z-index:6; }
+.mp-controls{ position:absolute; top:18%; left:9%; right:9%; display:flex; align-items:center; justify-content:space-between; }
+.mp-thumb{
+  width:calc(var(--pw) * .125); height:calc(var(--pw) * .125); border-radius:calc(var(--pw) * .032); overflow:hidden;
+  border:1px solid rgba(255,255,255,.3); padding:0; transition:transform .16s var(--ease-out); will-change:transform;
+}
+.mp-thumb:active{ transform:scale(.94); }
+.mp-thumb img{ width:100%; height:100%; object-fit:cover; }
+.mp-shutter{
+  width:calc(var(--pw) * .19); height:calc(var(--pw) * .19); border-radius:50%; padding:0;
+  border:calc(var(--pw) * .011) solid #fff; display:flex; align-items:center; justify-content:center;
+}
+.mp-shutter i{ width:78%; height:78%; border-radius:50%; background:#fff; transition:background .25s ease, transform .2s var(--ease-out); }
+.mp-shutter:active i{ transform:scale(.86); transition:transform .1s var(--ease-in); }
+.iphone.video .mp-shutter i{ background:#ff453a; transform:scale(.85); }
+.mp-flip{ color:#fff; width:calc(var(--pw) * .125); display:flex; justify-content:center; }
+.mp-flip svg{ width:calc(var(--pw) * .062); height:auto; }
+.mp-modes{
+  position:absolute; left:50%; transform:translateX(-50%); bottom:15%;
+  display:flex; width:62%; height:calc(var(--pw) * .092); border-radius:999px;
+  background:rgba(0,0,0,.38); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.2);
+}
+.mp-mode-hl{
+  position:absolute; top:2px; left:2px; width:calc((100% - 4px)/3); height:calc(100% - 4px);
+  border-radius:999px; background:rgba(255,255,255,.25); transition:transform .25s var(--ease-out);
+}
+.mp-modes button{
+  position:relative; z-index:1; flex:1; font-size:calc(var(--pw) * .03); font-weight:600; letter-spacing:.06em;
+  color:rgba(255,255,255,.55); transition:color .25s, opacity .1s;
+}
+.mp-modes button:active{ opacity:.6; }
+.mp-modes button[aria-pressed="true"]{ color:#fff; }
+
+/* first-run coach: a slider hangs from the Pholio bar and the viewfinder sits under dark glass
+   until the visitor finishes the swipe; after that the bar behaves like the app's */
+.mp-vf .vf-img{ transition:filter .45s var(--ease-out), transform .45s var(--ease-out); }
+.mp-vf.coached .vf-img{ filter:blur(7px) saturate(.85); transform:scale(1.08); }
+.vf-flash{ z-index:4; }
+.coach-veil{ position:absolute; inset:0; z-index:1; background:rgba(8,8,10,.46); pointer-events:none; }
+.coach-text{
+  position:absolute; left:7%; right:7%; top:46%; z-index:2; transform:translateY(-50%);
+  text-align:center; font-size:calc(var(--pw) * .074); font-weight:700; line-height:1.07; letter-spacing:-.012em;
+  color:#fff; text-shadow:0 2px 14px rgba(0,0,0,.45); text-wrap:balance; pointer-events:none;
+  transition:opacity .18s ease;
+}
+.vf-next{
+  position:absolute; inset:0; z-index:3; width:100%; height:100%; object-fit:cover;
+  transform:translateY(-100%); box-shadow:0 8px 18px rgba(0,0,0,.4);
+  will-change:transform; pointer-events:none;
+}
+.coach-rail{
+  --kw:calc(var(--pw) * .172);          /* the knob artwork is 62x69 */
+  --kh:calc(var(--kw) * 69 / 62);
+  --kc:calc(var(--kw) * 25.5 / 62);     /* centre of the orange body inside the artwork */
+  --travel:calc(var(--pw) * .26);
+  position:absolute; top:100%; left:50%; width:var(--kw); height:0;
+  transform:translateX(-50%); z-index:1; pointer-events:none;
+  transition:opacity .3s ease .14s;
+}
+.coach-bar, .coach-stem{
+  position:absolute; left:50%; width:calc(var(--pw) * .028); margin-left:calc(var(--pw) * -.014);
+  border-radius:999px; pointer-events:none;
+}
+/* the orange-to-black tail hangs from the knob and travels with it */
+.coach-bar{
+  top:var(--kc); height:calc(var(--kh) * 2);
+  background:linear-gradient(to bottom, #E97344 0%, #E97344 26%, rgba(233,115,68,0) 100%);
+  will-change:transform;
+}
+/* the travelled part: dark, from the bar down to the knob */
+.coach-stem{
+  top:0; height:calc(var(--kc) + var(--travel));
+  background:rgba(22,22,24,.95); box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+  transform-origin:top; transform:scaleY(0);
+}
+.coach-knob{
+  position:absolute; top:0; left:0; width:100%; height:var(--kh);
+  padding:0; background:none; border:0; cursor:grab; touch-action:none; pointer-events:auto;
+  will-change:transform; -webkit-tap-highlight-color:transparent;
+}
+.coach-knob img{ display:block; width:100%; height:auto; pointer-events:none; user-select:none; -webkit-user-select:none; }
+.coach-knob:active{ cursor:grabbing; }
+.coach-knob:focus-visible{ outline:2px solid #fff; outline-offset:2px; border-radius:calc(var(--kw) * .3); }
+/* 44px minimum hit area even when the knob draws smaller */
+.coach-knob::before{ content:""; position:absolute; left:50%; top:37%; width:max(44px, 100%); height:max(44px, 76%); transform:translate(-50%, -50%); }
+/* parked halfway: a small downward nudge says which way to finish */
+.coach-rail.parked .coach-knob img{ animation:knobNudge 1.8s var(--ease-out) infinite; }
+@keyframes knobNudge{ 0%, 55%, 100%{ transform:translateY(0); } 25%{ transform:translateY(calc(var(--pw) * .016)); } }
+
+/* in-phone album drawer — AlbumPickerSheet replica, with its dimming scrim */
+.mp-drawer{ position:absolute; inset:0; z-index:12; background:rgba(0,0,0,0); transition:background-color .35s var(--ease-out); }
+.mp-drawer.open{ background:rgba(0,0,0,.32); }
+.mp-drawer[hidden]{ display:none; }
+.mpd-card{
+  position:absolute; left:2.4%; right:2.4%; bottom:2%;
+  border-radius:26px 26px 22px 22px; background:rgba(28,28,30,.72);
+  -webkit-backdrop-filter:blur(22px) saturate(1.4); backdrop-filter:blur(22px) saturate(1.4);
+  box-shadow:0 -14px 44px rgba(0,0,0,.55); padding:0 6px 12px;
+  transform:translateY(106%); transition:transform .35s var(--ease-out); will-change:transform;
+}
+.mp-drawer.open .mpd-card{ transform:translateY(0); }
+.mpd-card::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.5), rgba(255,255,255,.06) 45%, transparent 75%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+}
+.mpd-handle{ width:34px; height:4px; border-radius:999px; background:rgba(255,255,255,.32); margin:10px auto 0; }
+.mpd-title{ text-align:center; font-size:15px; font-weight:600; padding:10px 0 6px; }
+.mpd-row{ width:100%; display:flex; align-items:center; gap:10px; text-align:left; padding:10px 10px; position:relative; border-radius:10px; transition:background-color .1s; }
+.mpd-row:active{ background:rgba(255,255,255,.08); }
+.mpd-row + .mpd-row::before{ content:""; position:absolute; top:0; left:52px; right:8px; height:1px; background:rgba(255,255,255,.12); }
+.mpd-row img{ width:34px; height:34px; border-radius:8px; object-fit:cover; border:1px solid rgba(255,255,255,.22); }
+.mpd-row b{ font-size:14px; font-weight:600; }
+.mpd-row span{ font-size:12px; color:var(--text-2); margin-left:auto; padding-right:6px; }
+.mpd-row svg{ flex:none; }
+.mpd-create{
+  display:block; width:calc(100% - 20px); margin:10px auto 0; padding:11px 0; border-radius:999px; text-align:center;
+  font-size:14px; font-weight:600; color:#fff; background:linear-gradient(180deg, #c14d1e, #9e3d13); cursor:default;
+}
+
+/* — gallery screen — */
+.gal-screen{ position:absolute; inset:0; background:#000; }
+.mp-gal-top{ position:absolute; top:9.6%; left:0; right:0; z-index:4; display:flex; align-items:center; gap:8px; padding:0 calc(var(--pw) * .06); }
+.mp-gal-top .gal-back{ color:var(--orange); display:flex; padding:4px; margin-left:-4px; }
+.mp-gal-top .gal-back svg{ width:calc(var(--pw) * .045); height:auto; }
+.mp-gal-top b{ font-size:calc(var(--pw) * .052); font-weight:600; letter-spacing:-.01em; }
+.mp-gal-top .gal-count{ font-size:calc(var(--pw) * .036); color:var(--text-2); margin-left:auto; }
+.fav-pill{
+  display:inline-flex; align-items:center; gap:5px; margin-left:auto;
+  font-size:calc(var(--pw) * .034); font-weight:600; color:#fff; padding:4px 10px; border-radius:999px;
+  background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.16); font-variant-numeric:tabular-nums;
+}
+.fav-pill svg{ width:calc(var(--pw) * .032); height:auto; }
+.fav-pill .pill-label-clip{ min-width:1.2em; }
+.fav-pill .pill-label{ font-size:inherit; text-shadow:none; }
+.mp-gal-grid{
+  position:absolute; top:16.5%; bottom:5%; left:3%; right:3%;
+  display:grid; grid-template-columns:1fr 1fr; grid-auto-rows:minmax(0,1fr); gap:calc(var(--pw) * .02); overflow:hidden;
+}
+.gal-cell{ position:relative; border-radius:calc(var(--pw) * .035); overflow:hidden; }
+.gal-cell img{ width:100%; height:100%; object-fit:cover; }
+/* the app's shipped contract: heart bottom-left, white */
+.heart-btn{
+  position:absolute; left:calc(var(--pw) * .024); bottom:calc(var(--pw) * .024); z-index:2;
+  width:calc(var(--pw) * .1); height:calc(var(--pw) * .1); border-radius:50%;
+  display:flex; align-items:center; justify-content:center; color:#fff; background:rgba(0,0,0,.28);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+}
+.heart-btn svg{ width:52%; height:auto; filter:drop-shadow(0 1px 3px rgba(0,0,0,.6)); transition:transform .2s var(--ease-out); }
+.heart-btn .h-fill{ opacity:0; transition:opacity .18s ease; }
+.heart-btn[aria-pressed="true"] .h-fill{ opacity:1; }
+.heart-btn[aria-pressed="true"] svg{ transform:scale(1.12); }
+.heart-btn:active svg{ transform:scale(.9); transition-duration:.1s; }
+
+/* ============================================================ STORY — one photo, two chapters */
+.story{ position:relative; }
+/* the photo rides inside an absolute full-height wrapper, so sticky can never leave the story */
+.story-bg-wrap{ position:absolute; inset:0; z-index:0; pointer-events:none; }
+.story-bg{ position:sticky; top:0; overflow:hidden; height:100vh; height:100svh; height:100dvh; }
+.story-bg img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 50%; }
+/* Figma: the photo sits 154% wide, so the phone starts right of the copy column */
+.story-bg .sb-sharp{ left:-2%; top:0; width:160%; height:117%; object-position:0 0; will-change:transform; }
+.story-bg .sb-blur{ filter:blur(28px) saturate(1.15); transform:scale(1.12); opacity:0; will-change:opacity; }
+.story-bg .sb-scrim{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(to right, rgba(0,0,0,.55) 0%, rgba(0,0,0,.25) 34%, rgba(0,0,0,0) 52%),
+    linear-gradient(to bottom, rgba(0,0,0,.4), rgba(0,0,0,0) 28%);
+}
+.story-bg .sb-dim{ position:absolute; inset:0; background:#000; opacity:0; }
+.story-bg .sb-fade{ position:absolute; left:0; right:0; bottom:0; height:38vh; background:linear-gradient(to bottom, rgba(0,0,0,0), #000); opacity:0; }
+.story > section{ position:relative; z-index:1; }
+
+.article-section{ min-height:100svh; display:flex; align-items:flex-start; padding:clamp(120px, 16vh, 180px) 0 clamp(120px, 18vh, 220px); }
+.article{ width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto; }
+.article-copy{ max-width:min(30%, 26em); text-shadow:0 2px 24px rgba(0,0,0,.4); }
+.article h2{ font-size:clamp(36px, 4.2vw, 56px); line-height:1.16; letter-spacing:-.02em; }
+.article .lede{ margin-top:32px; font-size:clamp(18px, 1.7vw, 24px); font-weight:500; line-height:1.5; color:#fff; }
+.article .meta{ margin-top:22px; font-size:15px; color:rgba(255,255,255,.78); display:flex; flex-wrap:wrap; gap:6px 14px; }
+.article .meta span{ display:inline-flex; align-items:center; gap:8px; }
+.article .meta svg{ color:var(--orange); flex:none; }
+@media (max-width:900px){
+  .story-bg .sb-sharp{ left:0; top:0; width:100%; height:100%; object-position:64% 0; }
+  .story-bg .sb-scrim{ background:linear-gradient(to top, rgba(0,0,0,.94) 0%, rgba(0,0,0,.86) 34%, rgba(0,0,0,.2) 62%, rgba(0,0,0,0) 80%); }
+  .article-section{ align-items:flex-end; padding:60vh 0 clamp(80px, 12vh, 140px); }
+  .article-copy{ max-width:none; }
+}
+
+/* ============================================================ CAMERA — Aim. File. Shoot. */
+.cam-section{ padding:clamp(72px, 11vh, 130px) 0 clamp(110px, 15vh, 180px); }
+.cam-headline{ text-align:center; margin-bottom:14px; text-shadow:0 2px 30px rgba(0,0,0,.5); }
+.cam-sub{ text-align:center; margin-inline:auto; margin-bottom:clamp(44px, 6vh, 72px); color:rgba(255,255,255,.78); text-shadow:0 1px 12px rgba(0,0,0,.5); }
+.cam-grid{
+  width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto;
+  display:grid; grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr);
+  gap:clamp(28px, 5vw, 72px); align-items:center;
+}
+.cam-stage{ display:flex; flex-direction:column; align-items:center; gap:22px; }
+.cam-stage .iphone{ --pw:min(360px, 80vw); }
+.cam-stage .cam-hint{ text-align:center; max-width:30em; }
+.cam-hint{ font-size:14px; color:rgba(255,255,255,.62); }
+.album-panel{ will-change:transform, opacity; }
+.ap-head{ display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+.ap-title{ font-size:clamp(28px, 3.2vw, 40px); }
+.ap-count{ font-size:15px; color:var(--text-2); font-variant-numeric:tabular-nums; }
+.ap-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; cursor:grab; touch-action:pan-y; }
+.ap-grid:active{ cursor:grabbing; }
+.ap-grid img{ width:100%; aspect-ratio:1; object-fit:cover; border-radius:14px; border:1px solid var(--hairline); pointer-events:none; }
+.ap-hint{ margin-top:16px; font-size:14px; color:rgba(255,255,255,.62); }
+@media (max-width:900px){
+  .cam-grid{ grid-template-columns:1fr; gap:40px; }
+  .ap-head{ justify-content:center; }
+  .ap-hint{ text-align:center; }
+}
+
+/* ============================================================ FAVORITES */
+.gal-section{ padding:var(--section-pad) 0; }
+.gal-headline{ text-align:center; margin-bottom:14px; }
+.gal-sub{ text-align:center; margin-inline:auto; margin-bottom:clamp(48px, 7vh, 84px); }
+.gal-grid{
+  width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto;
+  display:grid; grid-template-columns:minmax(0, 1.05fr) minmax(0, .95fr);
+  gap:clamp(32px, 6vw, 80px); align-items:center;
+}
+.gal-grid .iphone{ --pw:min(360px, 80vw); margin-inline:auto; }
+.fav-panel h3{ font-size:clamp(28px, 3.2vw, 40px); margin-bottom:10px; }
+.fav-panel > p{ color:var(--text-2); font-size:19px; max-width:26em; margin-bottom:28px; text-wrap:pretty; }
+.fav-card{ border-radius:var(--r-inner); border:1px solid var(--hairline); background:linear-gradient(170deg, #1a1a1c 0%, #121213 100%); padding:20px 22px 22px; }
+.fav-card-head{ display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.fav-card-head svg{ color:#fff; }
+.fav-card-head b{ font-size:17px; font-weight:600; }
+.fav-count{ margin-left:auto; font-size:13px; font-weight:600; color:var(--text-2); padding:4px 12px; border-radius:999px; border:1px solid var(--hairline); font-variant-numeric:tabular-nums; }
+.fav-strip{ display:flex; gap:8px; min-height:60px; flex-wrap:wrap; align-items:center; }
+.fav-strip img{ width:60px; height:60px; border-radius:12px; object-fit:cover; border:1px solid rgba(255,255,255,.22); animation:favIn .28s var(--ease-out); }
+@keyframes favIn{ from{ transform:translateY(10px) scale(.7); opacity:0; } }
+.fav-empty{ font-size:14px; color:var(--text-3); }
+.fav-note{ margin-top:14px; font-size:13px; color:var(--text-3); }
+.gal-col{ display:flex; flex-direction:column; align-items:center; gap:18px; }
+@media (max-width:900px){
+  .gal-grid{ grid-template-columns:1fr; gap:44px; }
+  .gal-grid .fav-panel{ order:2; }
+  .fav-panel h3, .fav-panel > p{ text-align:center; margin-inline:auto; }
+}
+
+/* ============================================================ WIDGET — pocket to photo */
+.speed-section{ padding:var(--section-pad) 0; border-top:1px solid var(--hairline); }
+.speed-grid{
+  width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto;
+  display:grid; grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr);
+  gap:clamp(32px, 6vw, 80px); align-items:center;
+}
+.speed-copy h2{ margin-bottom:12px; }
+.speed-copy > p{ color:var(--text-2); font-size:19px; max-width:26em; margin-bottom:36px; }
+.speed-item{ display:flex; gap:18px; align-items:flex-start; }
+.speed-item + .speed-item{ margin-top:22px; }
+.speed-item .s-num{
+  flex:none; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-style:italic; font-weight:600; font-size:22px; color:var(--orange);
+  background:rgba(189,73,26,.16); border:1px solid rgba(233,115,68,.3);
+}
+.speed-item h3{ font-size:19px; letter-spacing:-.01em; margin-bottom:4px; }
+.speed-item p{ color:var(--text-2); font-size:16px; max-width:26em; }
+.speed-media{ width:100%; max-width:640px; margin-inline:auto; aspect-ratio:1200/1230; }
+.speed-media video{ width:100%; height:100%; object-fit:cover; }
+@media (max-width:900px){
+  .speed-grid{ grid-template-columns:1fr; gap:36px; }
+  .speed-copy h2, .speed-copy > p{ text-align:center; margin-inline:auto; }
+  .speed-media{ order:-1; }
+}
+
+/* ============================================================ FILM — drag to compare */
+.film-section{ padding:var(--section-pad) 0; border-top:1px solid var(--hairline); }
+.film-head{ text-align:center; margin-bottom:14px; }
+.film-sub{ text-align:center; margin-inline:auto; margin-bottom:48px; }
+.cmp-stage{
+  position:relative; max-width:720px; margin-inline:auto; aspect-ratio:4/5;
+  border-radius:var(--r-card); overflow:hidden; border:1px solid var(--hairline);
+  box-shadow:0 30px 80px rgba(0,0,0,.6); cursor:ew-resize; touch-action:pan-y; --x:50%;
+  user-select:none; -webkit-user-select:none;
+}
+.cmp-stage img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; }
+.cmp-graded{ clip-path:inset(0 0 0 var(--x)); transition:filter .4s ease; }
+.cmp-divider{ position:absolute; top:0; bottom:0; left:var(--x); width:2px; margin-left:-1px; background:#fff; box-shadow:0 0 14px rgba(0,0,0,.5); pointer-events:none; }
+.cmp-handle{
+  position:absolute; top:50%; left:var(--x); width:48px; height:48px; transform:translate(-50%,-50%);
+  border-radius:50%; background:rgba(0,0,0,.45); border:1.5px solid rgba(255,255,255,.7);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  display:flex; align-items:center; justify-content:center; color:#fff; cursor:ew-resize;
+  box-shadow:0 8px 24px rgba(0,0,0,.45); transition:transform .15s var(--ease-out);
+}
+.cmp-stage.dragging .cmp-handle{ transform:translate(-50%,-50%) scale(1.08); }
+.cmp-label{
+  position:absolute; bottom:16px; display:inline-flex; align-items:center; padding:8px 15px; border-radius:999px;
+  font-size:13.5px; font-weight:600; color:#fff; background:rgba(0,0,0,.4);
+  -webkit-backdrop-filter:blur(14px) saturate(1.4); backdrop-filter:blur(14px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.28); text-shadow:0 1px 3px rgba(0,0,0,.5); pointer-events:none;
+}
+.cmp-label.l{ left:16px; } .cmp-label.r{ right:16px; }
+.cmp-label .pill-label{ font-size:13.5px; }
+.film-strip{ display:flex; gap:10px; overflow-x:auto; scrollbar-width:none; padding:28px max(24px, calc((100vw - 900px)/2)) 4px; -webkit-overflow-scrolling:touch; }
+.film-strip::-webkit-scrollbar{ display:none; }
+.film-strip-wrap{ position:relative; }
+.film-strip-wrap::before, .film-strip-wrap::after{ content:""; position:absolute; top:0; bottom:0; width:70px; z-index:2; pointer-events:none; }
+.film-strip-wrap::before{ left:0; background:linear-gradient(to right, #000, transparent); }
+.film-strip-wrap::after{ right:0; background:linear-gradient(to left, #000, transparent); }
+.strip-paddle{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:3; width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,.08); border:1px solid var(--hairline); display:flex; align-items:center; justify-content:center; color:var(--text);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); transition:background-color .2s;
+}
+.strip-paddle:disabled{ opacity:.35; cursor:default; }
+.strip-paddle.prev{ left:14px; } .strip-paddle.next{ right:14px; }
+@media (max-width:720px){ .strip-paddle, .film-strip-wrap::before, .film-strip-wrap::after{ display:none; } }
+.stock-chip{
+  flex:0 0 auto; display:inline-flex; align-items:center; gap:9px; min-height:44px;
+  padding:11px 19px; border-radius:999px; font-size:14.5px; font-weight:500; letter-spacing:0;
+  border:1px solid var(--hairline); background:#141415; color:var(--text-2);
+  transition:border-color .25s, background-color .25s, color .25s, transform .16s var(--ease-out);
+}
+.stock-chip i{ width:11px; height:11px; border-radius:50%; flex:none; }
+.stock-chip:active{ transform:scale(.97); }
+.stock-chip[aria-pressed="true"]{ border-color:var(--orange); background:rgba(233,115,68,.14); color:#fff; }
+.film-note{ text-align:center; margin-top:22px; font-size:13px; color:var(--text-3); padding:0 24px; }
+
+/* ============================================================ LIBRARY (light) */
+.albums-section{ padding:var(--section-pad) 0; background:#fff; color:#1d1d1f; }
+.albums-head{ text-align:center; margin-bottom:14px; }
+.albums-sub{ text-align:center; margin-inline:auto; margin-bottom:56px; color:rgba(29,29,31,.72); }
+.albums-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; max-width:1060px; margin-inline:auto; padding:0 24px; }
+.album-card{
+  border-radius:var(--r-inner); overflow:hidden; position:relative; aspect-ratio:1;
+  border:1px solid rgba(0,0,0,.08); box-shadow:0 12px 32px rgba(0,0,0,.08);
+  transition:transform .4s var(--ease-out), box-shadow .4s var(--ease-out);
+}
+.album-card img{ width:100%; height:100%; object-fit:cover; }
+.album-card .album-meta{ position:absolute; inset:auto 0 0 0; padding:44px 18px 14px; background:linear-gradient(to top, rgba(0,0,0,.78), transparent); color:#fff; }
+.album-meta strong{ display:block; font-size:17px; font-weight:600; }
+.album-meta span{ font-size:13px; color:rgba(255,255,255,.72); }
+.album-card.new{
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+  background:#f5f5f7; border:1.5px dashed rgba(0,0,0,.18); box-shadow:none; color:rgba(29,29,31,.6); font-size:15px; font-weight:500;
+}
+.album-card.new .plus{ width:52px; height:52px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1.5px solid rgba(189,73,26,.5); color:var(--orange-dark); }
+.albums-line{ text-align:center; margin-top:36px; font-size:15px; color:rgba(29,29,31,.72); padding:0 24px; display:flex; justify-content:center; flex-wrap:wrap; gap:8px 18px; }
+.albums-line span{ display:inline-flex; align-items:center; gap:8px; }
+.albums-line svg{ color:var(--orange-dark); }
+.albums-note{ text-align:center; margin-top:14px; font-size:13px; color:rgba(29,29,31,.55); }
+@media (max-width:720px){ .albums-grid{ grid-template-columns:1fr 1fr; } }
+
+/* ============================================================ PRICING (light) */
+.pricing-section{ padding:var(--section-pad) 0; background:#f5f5f7; color:#1d1d1f; }
+.pricing-head{ text-align:center; margin-bottom:14px; }
+.pricing-sub{ text-align:center; margin-inline:auto; margin-bottom:56px; color:rgba(29,29,31,.72); font-size:var(--fs-lg); max-width:30em; }
+.pricing-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; align-items:stretch; max-width:1020px; margin-inline:auto; padding:0 24px; }
+.price-card{ padding:36px 30px 34px; border-radius:var(--r-card); display:flex; flex-direction:column; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow:0 12px 32px rgba(0,0,0,.06); }
+.price-card.featured{ border-color:rgba(189,73,26,.55); box-shadow:0 20px 50px rgba(0,0,0,.10); }
+.price-plan{ font-size:14px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:rgba(29,29,31,.66); }
+.price-card.featured .price-plan{ color:var(--orange-dark); }
+.price-amount{ font-family:var(--font-sans); font-weight:600; font-size:44px; margin:14px 0 4px; letter-spacing:-.025em; font-variant-numeric:tabular-nums; }
+.price-amount small{ font-size:15px; font-weight:400; color:rgba(29,29,31,.68); letter-spacing:0; }
+.price-note{ font-size:14px; color:rgba(29,29,31,.68); margin-bottom:26px; }
+.price-features{ list-style:none; display:flex; flex-direction:column; gap:12px; font-size:15px; color:rgba(29,29,31,.78); }
+.price-features li{ display:flex; gap:10px; align-items:flex-start; }
+.price-features svg{ flex:none; margin-top:3px; color:var(--orange-dark); }
+.price-disclaimer{ text-align:center; margin-top:28px; font-size:13px; color:rgba(29,29,31,.68); max-width:46em; margin-inline:auto; padding:0 24px; }
+@media (max-width:900px){ .pricing-grid{ grid-template-columns:1fr; max-width:440px; } }
+
+/* ============================================================ CLOSE + FOOTER (light) */
+.final{ padding:var(--section-pad) 0 90px; text-align:center; background:#fff; color:#1d1d1f; }
+.final img{ width:96px; height:96px; border-radius:24px; margin:0 auto 34px; box-shadow:0 24px 60px rgba(0,0,0,.18); }
+.final h2{ margin-bottom:14px; }
+.final .oneliner{ margin:0 auto 40px; color:rgba(29,29,31,.72); text-align:center; }
+.final .store-badge{ border-color:#0b0b0c; box-shadow:0 10px 30px rgba(0,0,0,.16); }
+.final .hero-ctas{ justify-content:center; margin-top:0; }
+footer{ background:#f5f5f7; border-top:1px solid rgba(0,0,0,.12); padding:36px 0 max(48px, env(safe-area-inset-bottom)); color:#1d1d1f; }
+.footer-inner{ display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.footer-inner p{ font-size:13px; color:rgba(29,29,31,.68); }
+.footer-links{ display:flex; gap:24px; font-size:13px; color:rgba(29,29,31,.68); flex-wrap:wrap; align-items:center; }
+.footer-links a, .footer-soon{ display:inline-flex; align-items:center; min-height:44px; }
+.footer-soon{ color:rgba(29,29,31,.62); cursor:default; }
+
+/* ============================================================ HOVER — only where a hover exists */
+@media (hover:hover) and (pointer:fine){
+  .btn-orange:hover{ filter:brightness(1.08); }
+  .btn-ghost:hover{ background:rgba(255,255,255,.11); }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-cta:hover{ filter:brightness(1.12); }
+  .ftab:hover + .ftab-label .txt{ opacity:1; }
+  .strip-paddle:hover{ background:rgba(255,255,255,.16); }
+  .stock-chip:hover{ border-color:rgba(255,255,255,.3); }
+  .album-card:hover{ transform:translateY(-6px); box-shadow:0 30px 60px rgba(0,0,0,.16); }
+  .footer-links a:hover{ color:#1d1d1f; }
+}
+
+/* ============================================================ REDUCED MOTION / TRANSPARENCY */
+html.no-motion{ scroll-behavior:auto; }
+html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
+html.no-motion .coach-rail.parked .coach-knob img{ animation:none; }
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  .reveal{ opacity:1; transform:none; transition:none; }
+  .coach-rail.parked .coach-knob img{ animation:none; }
+  .fav-strip img{ animation:none; }
+  /* movement snaps; fades and colour changes keep working */
+  *{ transition-property:opacity, color, background-color, border-color, filter !important; }
+}
+@media (prefers-reduced-transparency: reduce){
+  .nav, .mock-pill, .mpd-card, .vf-chip, .cmp-handle, .cmp-label, .strip-paddle, .btn-ghost, .heart-btn, .mp-modes{
+    -webkit-backdrop-filter:none; backdrop-filter:none; background:rgba(20,20,22,.96);
+  }
+}
+
+/* ============================================================ 5K / very wide displays:
+   the column steps up to 1400px and fixed-value pieces scale with it (~1.17x);
+   everything inside the folder is percentage-based and follows automatically */
+@media (min-width:2300px){
+  /* fluid, not fixed: ~56px at 2560, scaling gently above that */
+  .hl-title{ margin-top:clamp(48px, 2.2vw, 68px); }
+  :root{
+    --content-w:1400px;
+    --fs-serif:clamp(47px, 3vw, 75px);
+    --tab-h:66px;
+    --tab-w:clamp(205px, 12vw, 304px);
+  }
+  .folder-tabs{ left:clamp(16px, 2.2vw, 56px); }
+  .folder-back{ top:calc(var(--tab-h) - 40px); height:105px; }
+  .hl-copy h3, .hl-copy p{ font-size:clamp(22px, 1.25vw, 29px); }
+  .ftab-label{ font-size:15px; bottom:11px; gap:7px; }
+  .tab-rule{ width:52px; height:5px; }
+  .hl-acc{ margin-bottom:19px; }
+  .acc-pill{ font-size:14px; padding:8px 15px; gap:8px; }
+  .acc-ios{ font-size:23px; }
+  .acc-ios svg{ width:19px; }
+  .acc-ctl{ width:49px; height:49px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================= NAV ================= -->
+<nav class="nav" id="nav" aria-label="Main">
+  <a class="nav-brand" href="#top">
+    <img src="assets/appicon-180.png" alt="" width="30" height="30">
+    Pholio
+  </a>
+  <div class="nav-links">
+    <a href="#camera">The Pholio bar</a>
+    <a href="#highlights">Features</a>
+    <a href="#library">Your library</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a class="nav-cta" href="#get">Coming soon</a>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero" id="top">
+  <div class="hero-media" id="heroMedia">
+    <video autoplay muted loop playsinline preload="metadata" poster="assets/hero-v5-poster.jpg" aria-hidden="true">
+      <source src="assets/hero-v5-720.mp4" type="video/mp4" media="(max-width: 900px)">
+      <source src="assets/hero-v5.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="hero-content">
+    <h1 class="reveal in">Organize before you shoot.</h1>
+    <p class="oneliner reveal in" data-delay="1">The camera that files every photo as you take it.</p>
+    <div class="hero-ctas reveal in" data-delay="2">
+      <!-- Swap for the official linked App Store badge at launch -->
+      <span class="store-mark" role="img" aria-label="Coming soon to the App Store">
+        <svg width="30" height="36" viewBox="0 0 26 30" fill="#fff" aria-hidden="true"><path d="M21.6 15.9c0-3 2.5-4.5 2.6-4.6-1.4-2.1-3.6-2.3-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-4-1-2 0-3.9 1.2-5 3-2.1 3.7-.5 9.1 1.5 12.1 1 1.5 2.2 3.1 3.8 3 1.5-.1 2.1-1 3.9-1 1.8 0 2.4 1 4 1 1.6 0 2.7-1.5 3.7-3 1.2-1.7 1.6-3.3 1.7-3.4-.1-.1-3.2-1.3-3.2-4.8zM18.6 6.6c.8-1 1.4-2.4 1.2-3.8-1.2 0-2.7.8-3.5 1.8-.8.9-1.5 2.3-1.3 3.7 1.4.1 2.8-.7 3.6-1.7z"/></svg>
+        <span>
+          <span class="sb-top">Coming soon to the</span>
+          <span class="sb-bottom">App Store</span>
+        </span>
+      </span>
+      <a class="btn btn-orange" href="#camera">See how it works</a>
+    </div>
+    <p class="hero-plans reveal in" data-delay="2">Free with 3 albums · Pholio+ $19.99/year or $39.99 once</p>
+  </div>
+</header>
+
+<main>
+
+<!-- ================= HIGHLIGHTS — a scroll-driven folder ================= -->
+<section class="hl" id="highlights" aria-label="Highlights">
+  <div class="hl-track" id="hlTrack">
+    <div class="hl-stage" id="hlStage">
+      <h2 class="serif-h hl-title reveal">Get the highlights.</h2>
+
+      <div class="folder" id="folder">
+        <div class="folder-back" aria-hidden="true"></div>
+        <div class="folder-tabs" role="tablist" aria-label="Highlights" id="folderTabs">
+          <span class="tab-measure" id="tabMeasure" aria-hidden="true"></span>
+        </div>
+
+        <div class="folder-body" id="folderBody">
+          <div class="folder-grid">
+            <div class="hl-copy" id="hlCopy">
+              <article role="tabpanel" id="fs-bar" aria-labelledby="ftab-bar">
+                <span class="hl-acc" aria-hidden="true">
+                  <span class="acc-pill">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg>
+                    Rome
+                    <svg width="9" height="11" viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg>
+                  </span>
+                </span>
+                <h3>The Pholio bar.</h3>
+                <p>Swipe the name of the album and shoot. It's already there.</p>
+              </article>
+              <article role="tabpanel" id="fs-gallery" aria-labelledby="ftab-gallery" hidden>
+                <span class="hl-acc" aria-hidden="true">
+                  <span class="acc-ios"><svg viewBox="0 0 26 30" fill="currentColor" aria-hidden="true"><path d="M21.6 15.9c0-3 2.5-4.5 2.6-4.6-1.4-2.1-3.6-2.3-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-4-1-2 0-3.9 1.2-5 3-2.1 3.7-.5 9.1 1.5 12.1 1 1.5 2.2 3.1 3.8 3 1.5-.1 2.1-1 3.9-1 1.8 0 2.4 1 4 1 1.6 0 2.7-1.5 3.7-3 1.2-1.7 1.6-3.3 1.7-3.4-.1-.1-3.2-1.3-3.2-4.8zM18.6 6.6c.8-1 1.4-2.4 1.2-3.8-1.2 0-2.7.8-3.5 1.8-.8.9-1.5 2.3-1.3 3.7 1.4.1 2.8-.7 3.6-1.7z"/></svg>iOS</span>
+                </span>
+                <h3>Your photos. Your phone.</h3>
+                <p>Pholio is built on iOS. Photos are saved on your phone's storage, kept in sync by iCloud.</p>
+              </article>
+              <article role="tabpanel" id="fs-widget" aria-labelledby="ftab-widget" hidden>
+                <span class="hl-acc" aria-hidden="true">
+                  <span class="acc-ctl acc-ctl-lantern"><img src="assets/Lantern.svg" alt=""></span>
+                  <span class="acc-ctl acc-ctl-pholio"><img src="assets/Pholio.svg" alt=""></span>
+                </span>
+                <p>A ready-made widget for your Lock Screen and Control Center.</p>
+              </article>
+            </div>
+
+            <div class="hl-phone">
+              <div class="hl-mocks" id="hlPhone">
+                <div class="hl-screens" id="hlScreens"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STORY — one photo, two chapters ================= -->
+<div class="story" id="story">
+  <div class="story-bg-wrap" aria-hidden="true">
+    <div class="story-bg" id="storyBg">
+      <img class="sb-sharp" src="assets/story-bg.jpg" alt="" fetchpriority="low">
+      <img class="sb-blur" id="sbBlur" src="assets/story-bg-small.jpg" alt="">
+      <div class="sb-scrim"></div>
+      <div class="sb-dim" id="sbDim"></div>
+      <div class="sb-fade" id="sbFade"></div>
+    </div>
+  </div>
+
+  <section class="article-section" id="library" aria-label="Your library">
+    <div class="article">
+      <div class="article-copy">
+        <h2 class="reveal">Open Photos.<br>It's already organized.</h2>
+        <p class="lede reveal" data-delay="1">Pholio saves straight into real Apple Photos albums. iCloud keeps them in sync. Delete the app tomorrow and everything stays.</p>
+        <p class="meta reveal" data-delay="2">
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Lives in Apple Photos</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Synced by iCloud</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Survives reinstalls and new phones</span>
+          <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Metadata intact</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cam-section" id="camera" aria-label="The Pholio bar">
+    <h2 class="serif-h cam-headline reveal">Aim. File. Shoot.</h2>
+    <p class="oneliner cam-sub reveal" data-delay="1">Swipe the Pholio bar. Every shot lands in the album it names.</p>
+
+    <div class="cam-grid">
+      <div class="cam-stage reveal">
+        <div class="iphone" id="mockPhone">
+          <div class="ip-bezel"><div class="ip-screen">
+            <div class="ip-island" aria-hidden="true"></div>
+            <div class="ip-status" aria-hidden="true"><span>9:41</span><span class="st-icons">
+                  <svg viewBox="0 0 20 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg>
+                  <svg viewBox="0 0 16 12" fill="#fff"><path d="M8 9.6a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2zM8 6c1.6 0 3 .6 4.1 1.6l-1.3 1.3A4 4 0 0 0 8 7.8c-1 0-2 .4-2.8 1.1L3.9 7.6A5.8 5.8 0 0 1 8 6zm0-3.6c2.6 0 5 1 6.8 2.7l-1.3 1.3A7.7 7.7 0 0 0 8 4.2c-2 0-3.9.8-5.5 2.2L1.2 5.1A9.6 9.6 0 0 1 8 2.4z"/></svg>
+                  <svg viewBox="0 0 27 12" fill="none"><rect x=".5" y=".5" width="23" height="11" rx="3" stroke="#fff" stroke-opacity=".5"/><rect x="2" y="2" width="20" height="8" rx="1.8" fill="#fff"/><path d="M25 4v4a2 2 0 0 0 0-4z" fill="#fff" fill-opacity=".5"/></svg>
+                </span></div>
+            <div class="cam-screen">
+              <div class="mp-vf" aria-hidden="true">
+                <img class="vf-img" id="vfImg" src="assets/album-family.jpg" alt="">
+                <img class="vf-blur" id="vfBlur" src="assets/album-family.jpg" alt="">
+                <div class="vf-flash" id="vfFlash"></div>
+              </div>
+              <svg class="mp-flash" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg>
+              <p class="mp-tip" id="camHint" aria-live="polite"></p>
+              <div class="mp-top">
+                <div class="mock-pill" id="mockPill" role="button" tabindex="0"
+                     aria-label="Album pill. Swipe up or down to switch albums, or tap to open the album drawer.">
+                  <svg class="ic-folder" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg>
+                  <span class="pill-label-clip"><span class="pill-label" id="mockPillLabel">Family</span></span>
+                  <svg class="ic-chev" viewBox="0 0 24 30" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg>
+                </div>
+              </div>
+              <span class="vf-chip f-chip">ƒ 2.0</span>
+              <span class="vf-chip rec-chip"><i></i>0:00</span>
+              <div class="mp-bottom">
+                <div class="mp-controls">
+                  <button class="mp-thumb" id="mpThumb" aria-label="Album thumbnail"><img id="mpThumbImg" src="assets/album-family.jpg" alt=""></button>
+                  <button class="mp-shutter" id="mpShutter" aria-label="Take a photo"><i></i></button>
+                  <div class="mp-flip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.2-3M20 15a8 8 0 0 1-14.2 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></div>
+                </div>
+                <div class="mp-modes" role="group" aria-label="Capture mode">
+                  <span class="mp-mode-hl" id="mpModeHl" aria-hidden="true"></span>
+                  <button data-mode="photo" aria-pressed="true">PHOTO</button>
+                  <button data-mode="video" aria-pressed="false">VIDEO</button>
+                  <button data-mode="portrait" aria-pressed="false">PORTRAIT</button>
+                </div>
+              </div>
+              <div class="mp-drawer" id="mpDrawer" role="dialog" aria-label="Select album" hidden>
+                <div class="mpd-card">
+                  <div class="mpd-handle" aria-hidden="true"></div>
+                  <p class="mpd-title">Select Album</p>
+                  <div id="mpdRows"></div>
+                  <span class="mpd-create">Create new album</span>
+                </div>
+              </div>
+            </div>
+            <div class="ip-home" aria-hidden="true"></div>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="album-panel" id="albumPanel">
+        <div class="ap-head">
+          <h3 class="ap-title" id="apTitle">Family</h3>
+          <span class="ap-count" id="apCount">1,164 items</span>
+        </div>
+        <div class="ap-grid" id="apGrid" aria-live="polite"></div>
+        <p class="ap-hint">The shot files itself here. Swipe the grid to tour the albums.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ================= FAVORITES ================= -->
+<section class="gal-section" id="gallery" aria-label="Gallery and Favorites">
+  <h2 class="gal-headline reveal">Loved it? Heart it.</h2>
+  <p class="oneliner gal-sub reveal" data-delay="1">Favorites is a smart album. Heart a photo anywhere and it's already there.</p>
+
+  <div class="gal-grid">
+    <div class="fav-panel reveal">
+      <h3>The gallery, built in.</h3>
+      <p>Browse every album without leaving the camera. Heart what you love. Pholio collects it in Favorites, automatically.</p>
+      <div class="fav-card">
+        <div class="fav-card-head">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9A5.4 5.4 0 0 1 12 6.7 5.4 5.4 0 0 1 21.5 12c-2 4.4-9.5 9-9.5 9z"/></svg>
+          <b>Favorites</b>
+          <span class="fav-count" id="favCount">0 photos</span>
+        </div>
+        <div class="fav-strip" id="favStrip">
+          <span class="fav-empty" id="favEmpty">Tap a heart on any photo →</span>
+        </div>
+        <p class="fav-note">A smart album that fills itself.</p>
+      </div>
+    </div>
+
+    <div class="gal-col reveal" data-delay="1">
+      <div class="iphone" id="galPhone">
+        <div class="ip-bezel"><div class="ip-screen">
+          <div class="ip-island" aria-hidden="true"></div>
+          <div class="ip-status" aria-hidden="true"><span>9:41</span><span class="st-icons">
+            <svg viewBox="0 0 20 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg>
+            <svg viewBox="0 0 16 12" fill="#fff"><path d="M8 9.6a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2zM8 6c1.6 0 3 .6 4.1 1.6l-1.3 1.3A4 4 0 0 0 8 7.8c-1 0-2 .4-2.8 1.1L3.9 7.6A5.8 5.8 0 0 1 8 6zm0-3.6c2.6 0 5 1 6.8 2.7l-1.3 1.3A7.7 7.7 0 0 0 8 4.2c-2 0-3.9.8-5.5 2.2L1.2 5.1A9.6 9.6 0 0 1 8 2.4z"/></svg>
+            <svg viewBox="0 0 27 12" fill="none"><rect x=".5" y=".5" width="23" height="11" rx="3" stroke="#fff" stroke-opacity=".5"/><rect x="2" y="2" width="20" height="8" rx="1.8" fill="#fff"/><path d="M25 4v4a2 2 0 0 0 0-4z" fill="#fff" fill-opacity=".5"/></svg>
+          </span></div>
+          <div class="gal-screen">
+            <div class="mp-gal-top">
+              <span class="gal-back" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+              <b>Family</b>
+              <span class="gal-count">1,164 items</span>
+            </div>
+            <div class="mp-gal-grid" id="galGrid"></div>
+          </div>
+          <div class="ip-home" aria-hidden="true"></div>
+        </div></div>
+      </div>
+      <p class="cam-hint">Try it. Tap the hearts.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= WIDGET ================= -->
+<section class="speed-section" id="widget" aria-label="Pocket to photo">
+  <div class="speed-grid">
+    <div class="speed-copy reveal">
+      <h2>Pocket to photo in a second.</h2>
+      <p>Put Pholio where the camera control sits. Three ways in, all pointed at your albums.</p>
+      <div class="speed-item">
+        <div class="s-num">1</div>
+        <div><h3>Lock Screen</h3><p>Hold the Lock Screen, tap Customize, and put Pholio in a control slot.</p></div>
+      </div>
+      <div class="speed-item">
+        <div class="s-num">2</div>
+        <div><h3>Control Center</h3><p>Add the Pholio control. One swipe from anywhere opens the camera.</p></div>
+      </div>
+      <div class="speed-item">
+        <div class="s-num">3</div>
+        <div><h3>Volume shutter</h3><p>Hold it like a camera and press the volume button, just like the native Camera.</p></div>
+      </div>
+    </div>
+    <div class="speed-media reveal" data-delay="1">
+      <video muted loop playsinline preload="none" poster="assets/widget-poster.jpg" data-autoplay data-src="assets/widget.mp4" aria-label="Adding the Pholio camera control to the Lock Screen"></video>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FILM ================= -->
+<section class="film-section" id="film" aria-label="Film filters">
+  <h2 class="film-head reveal">Shot on film. Sort of.</h2>
+  <p class="oneliner film-sub reveal" data-delay="1">Drag to compare. Tap a stock to change the look.</p>
+  <div class="cmp-stage reveal" data-delay="1" id="cmpStage">
+    <img class="cmp-base" src="assets/album-rome.jpg" alt="A photo of the Colosseum, original grade">
+    <img class="cmp-graded" id="cmpGraded" src="assets/album-rome.jpg" alt="The same photo, regraded by the selected film stock">
+    <div class="cmp-divider" aria-hidden="true"></div>
+    <div class="cmp-handle" id="cmpHandle" role="slider" tabindex="0" aria-label="Compare original and film stock" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg>
+    </div>
+    <span class="cmp-label l">Original</span>
+    <span class="cmp-label r"><span class="pill-label-clip"><span class="pill-label" id="filmChipLabel">Kodachrome 64</span></span></span>
+  </div>
+  <div class="film-strip-wrap">
+    <button class="strip-paddle prev" id="stripPrev" aria-label="Scroll film stocks left">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="film-strip" id="filmStrip" role="group" aria-label="Film stocks"></div>
+    <button class="strip-paddle next" id="stripNext" aria-label="Scroll film stocks right">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+  <p class="film-note">Grades approximated for the web. In the app, each stock is applied by its own film LUT at capture.</p>
+</section>
+
+<!-- ================= LIBRARY (light) ================= -->
+<section class="albums-section" id="albums" aria-label="Your albums in Apple Photos">
+  <h2 class="albums-head reveal">Your albums. In Photos.</h2>
+  <p class="oneliner albums-sub reveal" data-delay="1">Real albums in your own library. Nothing to export, nothing to migrate.</p>
+  <div class="albums-grid">
+    <div class="album-card reveal">
+      <img src="assets/album-rome.jpg" alt="Colosseum in Rome — cover of the Rome album" loading="lazy">
+      <div class="album-meta"><strong>Rome</strong><span>248 items</span></div>
+    </div>
+    <div class="album-card reveal" data-delay="1">
+      <img src="assets/album-family.jpg" alt="A family playing in a field — cover of the Family album" loading="lazy">
+      <div class="album-meta"><strong>Family</strong><span>1,164 items</span></div>
+    </div>
+    <div class="album-card reveal" data-delay="2">
+      <img src="assets/cover-turcia.jpg" alt="A coastal city seen from a viewpoint — cover of the Turkey album" loading="lazy">
+      <div class="album-meta"><strong>Turkey</strong><span>512 items</span></div>
+    </div>
+    <div class="album-card new reveal" data-delay="2" aria-hidden="true">
+      <div class="plus"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div>
+      New album
+    </div>
+  </div>
+  <p class="albums-line reveal">
+    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Lives in Apple Photos</span>
+    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Synced by iCloud</span>
+    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Survives reinstalls and new phones</span>
+    <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Metadata intact</span>
+  </p>
+  <p class="albums-note reveal">Album view shown for illustration. Your albums carry your own names and counts.</p>
+</section>
+
+<!-- ================= PRICING ================= -->
+<section class="pricing-section" id="pricing" aria-label="Pricing">
+  <h2 class="pricing-head reveal">Start free. Stay forever.</h2>
+  <p class="pricing-sub reveal" data-delay="1">Every camera feature is free. Pay only when your library outgrows three albums.</p>
+  <div class="pricing-grid">
+    <div class="price-card reveal">
+      <p class="price-plan">Free</p>
+      <p class="price-amount">$0</p>
+      <p class="price-note">Free forever</p>
+      <ul class="price-features">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>3 albums</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Full camera — photo, video, portrait</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>All 11 film filters</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Editor with revertible saves</li>
+      </ul>
+    </div>
+    <div class="price-card featured reveal" data-delay="1">
+      <p class="price-plan">Pholio+ Annual</p>
+      <p class="price-amount">$19.99<small>/year</small></p>
+      <p class="price-note">7-day free trial</p>
+      <ul class="price-features">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Unlimited albums</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Everything in Free</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>All future features</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Supports an independent developer</li>
+      </ul>
+    </div>
+    <div class="price-card reveal" data-delay="2">
+      <p class="price-plan">Lifetime</p>
+      <p class="price-amount">$39.99<small>&nbsp;once</small></p>
+      <p class="price-note">Pay once, keep forever</p>
+      <ul class="price-features">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Unlimited albums, forever</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Everything in Pholio+</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>No subscription, ever</li>
+      </ul>
+    </div>
+  </div>
+  <p class="price-disclaimer">Launch pricing — may vary by region. Purchases happen in the app, and your photos are never behind the paywall: it only gates how many albums you can create.</p>
+</section>
+
+<!-- ================= FINAL ================= -->
+<section class="final" id="get" aria-label="Get Pholio">
+  <div class="wrap">
+    <img src="assets/appicon-512.png" alt="Pholio app icon" class="reveal">
+    <h2 class="reveal">Capture first. Stay organized <em>forever</em>.</h2>
+    <p class="oneliner reveal" data-delay="1">Pholio Camera is coming to the App Store.</p>
+    <div class="hero-ctas reveal" data-delay="2">
+      <!-- Swap for the official linked App Store badge at launch -->
+      <span class="store-badge" role="img" aria-label="Coming soon to the App Store">
+        <svg width="26" height="30" viewBox="0 0 26 30" fill="#fff" aria-hidden="true"><path d="M21.6 15.9c0-3 2.5-4.5 2.6-4.6-1.4-2.1-3.6-2.3-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-4-1-2 0-3.9 1.2-5 3-2.1 3.7-.5 9.1 1.5 12.1 1 1.5 2.2 3.1 3.8 3 1.5-.1 2.1-1 3.9-1 1.8 0 2.4 1 4 1 1.6 0 2.7-1.5 3.7-3 1.2-1.7 1.6-3.3 1.7-3.4-.1-.1-3.2-1.3-3.2-4.8zM18.6 6.6c.8-1 1.4-2.4 1.2-3.8-1.2 0-2.7.8-3.5 1.8-.8.9-1.5 2.3-1.3 3.7 1.4.1 2.8-.7 3.6-1.7z"/></svg>
+        <span>
+          <span class="sb-top">Coming soon to the</span>
+          <span class="sb-bottom">App Store</span>
+        </span>
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap footer-inner">
+    <p>© 2026 Pholio. Photo + Folder.</p>
+    <div class="footer-links">
+      <!-- Point at the real support page before launch (pholio.me/help is 404 today) -->
+      <span class="footer-soon">Help — with launch</span>
+      <!-- Replace with the real privacy-policy link before launch -->
+      <span class="footer-soon">Privacy policy — with launch</span>
+    </div>
+  </div>
+</footer>
+
+</main>
+
+<script>
+/* ============================================================
+   PHOLIO LANDING v3 — behavior
+   In-phone pill motion is the app's own (CameraControlsView.albumPill):
+     out : translateY(±16px) + fade, 100ms ease-in
+     in  : from translateY(∓12px) → 0, 200ms spring (bounce .1)
+   Page-level blocks use the same shape with an ease-out exit.
+   ============================================================ */
+(function(){
+"use strict";
+const forceStatic = new URLSearchParams(location.search).has("static");
+if (forceStatic){
+  document.documentElement.classList.add("no-motion");
+  document.querySelectorAll('img[loading="lazy"]').forEach(i => { i.loading = "eager"; });
+}
+const reduceMotion = forceStatic || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+document.querySelectorAll("video[data-src]").forEach(v => {
+  if (forceStatic) return;
+  const src = document.createElement("source");
+  src.src = v.dataset.src; src.type = "video/mp4";
+  v.appendChild(src);
+});
+
+/* ---------- nav ---------- */
+const nav = document.getElementById("nav");
+addEventListener("scroll", () => nav.classList.toggle("scrolled", scrollY > 24), {passive:true});
+
+/* ---------- reveal ---------- */
+const revealIO = new IntersectionObserver(entries => {
+  for (const e of entries) if (e.isIntersecting){ e.target.classList.add("in"); revealIO.unobserve(e.target); }
+}, {threshold:.18, rootMargin:"0px 0px -8% 0px"});
+document.querySelectorAll(".reveal:not(.in)").forEach(el => revealIO.observe(el));
+
+/* ---------- video autoplay in view ---------- */
+const vidIO = new IntersectionObserver(entries => {
+  for (const e of entries){ const v = e.target; if (e.isIntersecting){ v.play().catch(()=>{}); } else { v.pause(); } }
+}, {threshold:.25});
+if (!reduceMotion) document.querySelectorAll("video").forEach(v => vidIO.observe(v));
+
+const heroVideo = document.querySelector("#heroMedia video");
+if (reduceMotion && !forceStatic && heroVideo){
+  heroVideo.autoplay = false;
+  const stop = () => heroVideo.pause();
+  stop(); heroVideo.addEventListener("loadeddata", stop, {once:true});
+}
+if (forceStatic && heroVideo){
+  const freeze = () => { heroVideo.pause(); try { heroVideo.currentTime = 5.5; } catch(e){} };
+  heroVideo.readyState >= 2 ? freeze() : heroVideo.addEventListener("loadeddata", freeze, {once:true});
+}
+
+/* ============================================================ MOTION PRIMITIVES */
+const EXIT_APP  = "cubic-bezier(.4,0,1,1)";     /* the app's own .easeIn for the in-phone pill */
+const EXIT_PAGE = "cubic-bezier(.23,1,.32,1)";  /* page blocks leave on an ease-out */
+const ENTER     = "cubic-bezier(.34,1.25,.5,1)";
+
+function cycleLabel(labelEl, nextText, goingDown, instant, exitCurve){
+  if (reduceMotion || instant){ labelEl.textContent = nextText; return; }
+  const OUT = goingDown ? 16 : -16, IN = goingDown ? -12 : 12, X = exitCurve || EXIT_APP;
+  labelEl.style.transition = `transform .1s ${X}, opacity .1s ${X}`;
+  labelEl.style.transform = `translateY(${OUT}px)`;
+  labelEl.style.opacity = "0";
+  setTimeout(() => {
+    labelEl.textContent = nextText;
+    labelEl.style.transition = "none";
+    labelEl.style.transform = `translateY(${IN}px)`;
+    void labelEl.offsetHeight;
+    labelEl.style.transition = `transform .2s ${ENTER}, opacity .2s ${ENTER}`;
+    labelEl.style.transform = "translateY(0)";
+    labelEl.style.opacity = "1";
+  }, 100);
+}
+/* the same shape for a whole block: out 100ms, swap, in 240ms */
+function cycleBlock(el, goingDown, swap, axis, instant){
+  if (reduceMotion || instant){ swap(); return; }
+  const OUT = goingDown ? 22 : -22, IN = goingDown ? -16 : 16;
+  const t = v => axis === "x" ? `translateX(${v}px)` : `translateY(${v}px)`;
+  el.style.transition = `transform .1s ${EXIT_PAGE}, opacity .1s ${EXIT_PAGE}`;
+  el.style.transform = t(OUT); el.style.opacity = "0";
+  setTimeout(() => {
+    swap();
+    el.style.transition = "none";
+    el.style.transform = t(IN);
+    void el.offsetHeight;
+    el.style.transition = `transform .24s ${ENTER}, opacity .24s ${ENTER}`;
+    el.style.transform = t(0); el.style.opacity = "1";
+  }, 100);
+}
+/* iOS rubber-band: (overshoot * dimension * c) / (dimension + c * |overshoot|) */
+function rubberband(x, dim, c){ c = c || .55; return (x * dim * c) / (dim + c * Math.abs(x)); }
+
+/* Vertical drag mirroring DragGesture(minimumDistance:12), 20pt trigger, one cycle per gesture.
+   Tracking is 1:1 (transition off during the gesture); the spring returns it on release. */
+function attachPillDrag(pill, onCycle, onTap, onMove){
+  let startY = null, moved = 0, cycled = false;
+  pill.addEventListener("pointerdown", e => {
+    startY = e.clientY; moved = 0; cycled = false;
+    pill.classList.add("dragging"); pill.setPointerCapture(e.pointerId);
+  });
+  pill.addEventListener("pointermove", e => {
+    if (startY === null) return;
+    const dy = e.clientY - startY;
+    moved = Math.max(moved, Math.abs(dy));
+    if (cycled || Math.abs(dy) < 4) return;
+    const r = rubberband(dy, 40);
+    pill.style.transform = `translateY(${r}px)`;
+    if (onMove) onMove(r);
+    if (Math.abs(dy) > 20){ cycled = true; if (onMove) onMove(0); onCycle(dy > 0); }
+  });
+  const release = () => {
+    if (startY !== null && !cycled && moved < 6 && onTap) onTap();
+    startY = null; pill.classList.remove("dragging"); pill.style.transform = "";
+    if (onMove) onMove(0);
+  };
+  pill.addEventListener("pointerup", release);
+  pill.addEventListener("pointercancel", release);
+  pill.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown"){ e.preventDefault(); onCycle(true, true); }
+    if (e.key === "ArrowUp"){ e.preventDefault(); onCycle(false, true); }
+    if ((e.key === "Enter" || e.key === " ") && onTap){ e.preventDefault(); onTap(); }
+  });
+}
+
+/* ============================================================ DATA */
+const ALBUMS = [
+  { name: "Family", count: "1,164 items", cover: "assets/album-family.jpg",
+    photos: ["assets/album-family.jpg","assets/fam-1.jpg","assets/ph-d75.jpg","assets/fam-3.jpg","assets/fam-4.jpg","assets/fam-2.jpg"] },
+  { name: "Turkey", count: "512 items", cover: "assets/cover-turcia.jpg",
+    photos: ["assets/cover-turcia.jpg","assets/ph-02.0.jpg","assets/ph-05.5.jpg","assets/ph-00.8.jpg","assets/ph-07.5.jpg","assets/hand.jpg"] },
+  { name: "Concerts", count: "86 items", cover: "assets/ph-13.6.jpg",
+    photos: ["assets/ph-13.6.jpg","assets/ph-15.3.jpg","assets/ph-14.4.jpg","assets/ph-18.5.jpg","assets/ph-16.1.jpg","assets/ph-17.7.jpg"] },
+];
+const STOCKS = [
+  ["Original", "", "#9a9a9a"],
+  ["Portra 160", "saturate(.86) contrast(.96) sepia(.12)", "#e8b48a"],
+  ["Portra 160 VC", "saturate(1.05) contrast(1.05) sepia(.1)", "#e09a6a"],
+  ["Gold 200", "saturate(1.1) sepia(.22) brightness(1.03)", "#e8c25a"],
+  ["Superia 200", "saturate(1.12) hue-rotate(-6deg) contrast(1.04)", "#6fbf8f"],
+  ["Vista 200", "saturate(1.18) sepia(.15) contrast(1.06)", "#d96a4a"],
+  ["Velvia 50", "saturate(1.6) contrast(1.14)", "#4fae6b"],
+  ["Kodachrome 64", "saturate(1.28) contrast(1.12) sepia(.1) hue-rotate(-8deg)", "#d94f2b"],
+  ["Provia 100F", "saturate(1.08) contrast(1.06) hue-rotate(4deg)", "#5a9fd4"],
+  ["Tri-X 400", "grayscale(1) contrast(1.28) brightness(1.03)", "#a8a8a8"],
+  ["HP5 400", "grayscale(1) contrast(1.12)", "#cfcfcf"],
+  ["Acros 100", "grayscale(1) contrast(1.05) brightness(1.06)", "#e5e5e5"],
+];
+const HEART = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9A5.4 5.4 0 0 1 12 6.7 5.4 5.4 0 0 1 21.5 12c-2 4.4-9.5 9-9.5 9z"/><path class="h-fill" fill="#fff" stroke="none" d="M12 21s-7.5-4.6-9.5-9A5.4 5.4 0 0 1 12 6.7 5.4 5.4 0 0 1 21.5 12c-2 4.4-9.5 9-9.5 9z"/></svg>';
+
+function renderGalleryGrid(grid, photos, onHeart){
+  grid.innerHTML = photos.map(p => `
+    <div class="gal-cell">
+      <img src="${p}" alt="" loading="lazy" draggable="false">
+      <button class="heart-btn" aria-pressed="false" aria-label="Favorite this photo" data-photo="${p}">${HEART}</button>
+    </div>`).join("");
+  grid.querySelectorAll(".heart-btn").forEach(btn => btn.addEventListener("click", () => {
+    const on = btn.getAttribute("aria-pressed") === "true";
+    btn.setAttribute("aria-pressed", on ? "false" : "true");
+    if (onHeart) onHeart(!on, btn.dataset.photo);
+  }));
+}
+
+/* ============================================================ HIGHLIGHTS — the folder drives on scroll */
+const HIGHLIGHTS = [
+  { key:"bar",     label:"The Pholio bar", c1:"#E97344", c2:"#BD491A", rgba:[233,115,68,.17] },
+  { key:"gallery", label:"Gallery",        c1:"#40D583", c2:"#38BBD9", rgba:[56,187,217,.15] },
+  { key:"widget",  label:"Lock Screen",    c1:"#E044AC", c2:"#B162F3", rgba:[177,98,243,.15] },
+];
+
+(function initHighlights(){
+  const N = HIGHLIGHTS.length;
+  const track = document.getElementById("hlTrack");
+  const stage = document.getElementById("hlStage");
+  const tabsEl = document.getElementById("folderTabs");
+  const measure = document.getElementById("tabMeasure");
+  const body = document.getElementById("folderBody");
+  const phone = document.getElementById("hlPhone");
+  const screensEl = document.getElementById("hlScreens");
+  const copies = Array.from(document.getElementById("hlCopy").children);
+
+  /* ---- ribbons ---- */
+  const TAB_PATH = "M0 56 V16 Q0 0 16 0 H198 C226 0 234 56 260 56 Z";
+  tabsEl.insertAdjacentHTML("beforeend", HIGHLIGHTS.map((h, i) => `
+    <button class="ftab" role="tab" id="ftab-${h.key}" aria-controls="fs-${h.key}" aria-selected="${i === 0}" aria-label="${h.label}" data-i="${i}">
+      <svg viewBox="0 0 260 56" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="tg-${h.key}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${h.c1}"/><stop offset="1" stop-color="${h.c2}"/></linearGradient></defs>
+        <path d="${TAB_PATH}" fill="url(#tg-${h.key})"/>
+      </svg>
+    </button>
+    <span class="ftab-label" aria-hidden="true"><span class="tab-rule"></span><span class="txt">${h.label}</span></span>`).join(""));
+  const tabs = Array.from(tabsEl.querySelectorAll(".ftab"));
+  const labels = Array.from(tabsEl.querySelectorAll(".ftab-label"));
+  const rules = labels.map(l => l.querySelector(".tab-rule"));
+
+  /* pre-tinted folder layers, cross-faded by opacity (no per-frame CSS variable) */
+  body.insertAdjacentHTML("afterbegin", HIGHLIGHTS.map(h =>
+    `<div class="folder-tint" style="background:rgba(${h.rgba[0]},${h.rgba[1]},${h.rgba[2]},${h.rgba[3]})" aria-hidden="true"></div>`).join(""));
+  const tints = Array.from(body.querySelectorAll(".folder-tint"));
+
+  /* layout reads happen on resize, never inside the scrub loop */
+  let layoutW = 240, labelW = [];
+  function measureLayout(){
+    layoutW = measure.offsetWidth || 240;
+    labelW = labels.map(l => l.scrollWidth);
+    if (pos >= 0) render(pos);
+  }
+
+  /* ---- screens: the three mockup renders ---- */
+  const MOCKS = [
+    { src:"assets/mockups-03.png", alt:"Close-up of an iPhone running Pholio — the Rome album pill above the viewfinder" },
+    { src:"assets/mockups-02.png", alt:"Three iPhone screens of Pholio's gallery — an album grid, Favorites, and video playback" },
+    { src:"assets/mockups-01.png", alt:"A hand holding an iPhone on the Lock Screen, ready to launch Pholio" },
+  ];
+  screensEl.innerHTML = MOCKS.map(m =>
+    `<div class="hl-screen"><img class="hl-mock" src="${m.src}" alt="${m.alt}" loading="${forceStatic ? "eager" : "lazy"}" draggable="false"></div>`
+  ).join("");
+  const screens = Array.from(screensEl.children);
+
+  /* chapter-1 bleed: push the close-up's bottom 26px past the folder's bottom
+     edge so the rounded body clips the PNG's raw crop, at every viewport */
+  const bleedImgs = [screens[0], screens[2]].map(sc => sc.querySelector(".hl-mock"));
+  function setBleed(){
+    const fb = body.getBoundingClientRect();
+    const st = screensEl.getBoundingClientRect();
+    if (!fb.height || !st.height) return;
+    const off = Math.max(0, fb.bottom - st.bottom + 26).toFixed(1);
+    bleedImgs.forEach(img => { img.style.transform = `translateY(${off}px)`; });
+  }
+  bleedImgs.forEach(img => img.addEventListener("load", setBleed, {once:true}));
+  addEventListener("resize", setBleed);
+  setBleed();
+
+  /* ============================ the renderer: one continuous position drives everything */
+  let pos = -1, lastAct = -1;
+  const smooth = a => a * a * (3 - 2 * a);
+
+  function render(p){
+    p = Math.max(0, Math.min(N - 1, p));
+    pos = p;
+    const narrow = narrowMQ.matches;
+    const W = layoutW;
+    const minSX = narrow ? .68 : .72, minSY = .76, OVER = .16;
+    let x = 0, prevW = 0;
+    for (let i = 0; i < N; i++){
+      const g = Math.max(0, 1 - Math.abs(p - i));
+      const sx = minSX + (1 - minSX) * g, sy = minSY + (1 - minSY) * g;
+      const w = W * sx;
+      const overlap = i === 0 ? 0 : prevW * OVER;
+      x -= overlap;
+      tabs[i].style.transform = `translateX(${x.toFixed(1)}px) scale(${sx.toFixed(4)}, ${sy.toFixed(4)})`;
+      const inset = i === 0 ? (narrow ? 16 : 24) : overlap + (narrow ? 8 : 12);
+      labels[i].style.transform = `translateX(${(x + inset).toFixed(1)}px)`;
+      labels[i].style.opacity = (narrow ? Math.pow(g, 1.6) : .55 + .45 * g).toFixed(3);
+      rules[i].style.transform = `scaleX(${g.toFixed(3)})`;
+      /* the label may only use the part of its ribbon the next one leaves uncovered */
+      const nextG = i === N - 1 ? 0 : Math.max(0, 1 - Math.abs(p - (i + 1)));
+      const nextW = i === N - 1 ? 0 : W * (minSX + (1 - minSX) * nextG);
+      const pad = narrow ? 4 : 10;
+      const exposed = i === N - 1 ? w - inset - pad : w - inset - nextW * OVER - pad;
+      const cut = Math.max(0, (labelW[i] || 0) - Math.max(0, exposed));
+      labels[i].style.clipPath = cut > 0.5 ? `inset(0 ${cut.toFixed(0)}px 0 0)` : "none";
+      x += w; prevW = w;
+    }
+    /* the folder tint bleeds between the pre-tinted layers, opacity only */
+    /* screens cross-dissolve inside the one device; copy rises through */
+    for (let i = 0; i < N; i++){
+      const d = p - i, vis = Math.max(0, 1 - Math.abs(d));
+      /* widened plateau keeps combined coverage near 1 mid-dissolve (no brightness dip) */
+      const e = smooth(Math.min(1, vis * 1.3));
+      const cv = smooth(Math.max(0, Math.min(1, 1 - Math.abs(d) * 1.85)));
+      tints[i].style.opacity = vis.toFixed(3);
+      screens[i].style.opacity = e.toFixed(3);
+      screens[i].style.transform = `translateY(${(-d * 12).toFixed(1)}px) scale(${(.976 + .024 * e).toFixed(4)})`;
+      screens[i].style.visibility = vis <= 0 ? "hidden" : "visible";
+      copies[i].hidden = false;
+      copies[i].style.opacity = cv.toFixed(3);
+      copies[i].style.transform = `translateY(${(-d * 34).toFixed(1)}px)`;
+      copies[i].style.visibility = cv <= 0 ? "hidden" : "visible";
+      copies[i].setAttribute("aria-hidden", vis <= 0 ? "true" : "false");
+    }
+    const act = Math.round(p);
+    if (act !== lastAct){
+      lastAct = act;
+      for (let i = 0; i < N; i++){
+        tabs[i].style.zIndex = i === act ? "30" : String(12 + (N - Math.abs(act - i)));
+        tabs[i].setAttribute("aria-selected", i === act ? "true" : "false");
+        tabs[i].tabIndex = i === act ? 0 : -1;
+      }
+    }
+    /* the device lifts a little as each chapter hands over */
+    const frac = p - Math.floor(p);
+    /* both terms are continuous and zero at whole chapters — no mid-chapter snap */
+    phone.style.transform = `translateY(${(-7 * Math.sin(frac * Math.PI)).toFixed(2)}px) rotate(${(Math.sin(frac * Math.PI * 2) * 0.55).toFixed(3)}deg)`;
+  }
+
+  /* ============================ drivers: scroll on desktop, a tween on the fallback */
+  const narrowMQ = matchMedia("(max-width:900px)");
+  const motionMQ = matchMedia("(prefers-reduced-motion: reduce)");
+  const noMotion = () => forceStatic || motionMQ.matches;
+  let live = !narrowMQ.matches && !noMotion();
+  function syncMode(){
+    live = !narrowMQ.matches && !noMotion();
+    track.classList.toggle("live", live);
+    if (live) fromScroll(); else render(Math.round(Math.max(0, pos)));
+  }
+  let raf = 0;
+  function fromScroll(){
+    raf = 0;
+    const usable = track.offsetHeight - stage.offsetHeight;
+    if (usable <= 0) return;
+    const q = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / usable)) * (N - 1);
+    /* dwell: hold 22% of each segment at both chapters before scrubbing between them */
+    const seg = Math.min(N - 2, Math.floor(q)), t = q - seg, HOLD = .22;
+    const t2 = Math.min(1, Math.max(0, (t - HOLD) / (1 - 2 * HOLD)));
+    render(seg + t2);
+  }
+  addEventListener("scroll", () => { if (live && !raf) raf = requestAnimationFrame(fromScroll); }, {passive:true});
+  addEventListener("resize", () => { measureLayout(); syncMode(); });
+  narrowMQ.addEventListener?.("change", syncMode);
+  motionMQ.addEventListener?.("change", syncMode);
+
+  let tweenRaf = 0, springVel = 0;
+  function tweenTo(target){
+    cancelAnimationFrame(tweenRaf);
+    if (noMotion()){ springVel = 0; render(target); return; }
+    /* critically damped spring (response ~.32s); velocity carries across retargets */
+    const k = Math.pow((2 * Math.PI) / 0.32, 2), c = 2 * Math.sqrt(k);
+    let last = performance.now();
+    (function step(now){
+      const dt = Math.min(.032, Math.max(.001, (now - last) / 1000)); last = now;
+      springVel += (-k * (pos - target) - c * springVel) * dt;
+      const next = pos + springVel * dt;
+      if (Math.abs(next - target) < .001 && Math.abs(springVel) < .01){
+        springVel = 0; render(target); return;
+      }
+      render(next);
+      tweenRaf = requestAnimationFrame(step);
+    })(last);
+  }
+  function goTo(i){
+    if (!live){ tweenTo(i); return; }
+    const usable = track.offsetHeight - stage.offsetHeight;
+    const top = track.getBoundingClientRect().top + scrollY;
+    /* land mid-plateau so the chapter is fully settled at arrival */
+    const HOLD = .22;
+    const target = i === 0 ? HOLD / 2 : i === N - 1 ? (N - 1) - HOLD / 2 : i;
+    scrollTo({ top: top + (target / (N - 1)) * usable, behavior: noMotion() ? "auto" : "smooth" });
+  }
+  tabs.forEach((t, i) => {
+    t.addEventListener("click", e => { goTo(i); if (e.detail > 0) t.blur(); });
+    t.addEventListener("focus", () => { if (t.matches(":focus-visible")) labels[i].classList.add("focused"); });
+    t.addEventListener("blur", () => labels[i].classList.remove("focused"));
+    t.addEventListener("keydown", e => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown"){ e.preventDefault(); const n = Math.min(N - 1, Math.round(pos) + 1); goTo(n); tabs[n].focus(); }
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp"){ e.preventDefault(); const n = Math.max(0, Math.round(pos) - 1); goTo(n); tabs[n].focus(); }
+    });
+  });
+
+
+  measureLayout();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureLayout);
+  syncMode();
+  render(0);
+  if (live) fromScroll();
+})();
+
+/* ============================================================ SCROLL SCRUBS — the hero departs, the photo breathes and blurs */
+(function initScrubs(){
+  const heroMedia = document.getElementById("heroMedia");
+  const heroContent = document.querySelector(".hero-content");
+  const sharp = document.querySelector(".story-bg .sb-sharp");
+  const blur = document.getElementById("sbBlur"), dim = document.getElementById("sbDim"), fade = document.getElementById("sbFade");
+  const cam = document.getElementById("camera");
+  let raf = 0;
+  function update(){
+    raf = 0;
+    const vh = innerHeight;
+    if (!reduceMotion){
+      /* the film pushes back and the copy lifts away as the first chapter ends */
+      const h = Math.max(0, Math.min(1, scrollY / vh));
+      heroMedia.style.transform = `scale(${(1 + h * .09).toFixed(4)})`;
+      heroContent.style.transform = `translateY(${(h * -72).toFixed(1)}px)`;
+      heroContent.style.opacity = (1 - Math.min(1, h * 1.35)).toFixed(3);
+    }
+    const r = cam.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (vh - r.top) / (vh * .85)));
+    blur.style.opacity = p.toFixed(3);
+    fade.style.opacity = p.toFixed(3);
+    dim.style.opacity = (p * .45).toFixed(3);
+    if (!reduceMotion) sharp.style.transform = `scale(${(1 + p * .06).toFixed(4)})`;
+  }
+  addEventListener("scroll", () => { if (!raf) raf = requestAnimationFrame(update); }, {passive:true});
+  addEventListener("resize", update);
+  update();
+})();
+
+/* ============================================================ CAMERA DEMO — v2's live phone + album panel, with play/pause */
+(function initCameraDemo(){
+  const section = document.getElementById("camera");
+  const phone = document.getElementById("mockPhone");
+  const pill = document.getElementById("mockPill");
+  const label = document.getElementById("mockPillLabel");
+  const vfImg = document.getElementById("vfImg");
+  const vfBlur = document.getElementById("vfBlur");
+  const flash = document.getElementById("vfFlash");
+  const thumbBtn = document.getElementById("mpThumb");
+  const thumb = document.getElementById("mpThumbImg");
+  const shutter = document.getElementById("mpShutter");
+  const panel = document.getElementById("albumPanel");
+  const apTitle = document.getElementById("apTitle");
+  const apCount = document.getElementById("apCount");
+  const apGrid = document.getElementById("apGrid");
+  const drawer = document.getElementById("mpDrawer");
+  const drawerRows = document.getElementById("mpdRows");
+  const camHint = document.getElementById("camHint");
+  let idx = 0, busy = false, pendingAlbum = null;
+
+  function renderGrid(a){
+    apGrid.innerHTML = a.photos.map(p => `<img src="${p}" alt="" loading="lazy" draggable="false">`).join("");
+    apTitle.textContent = a.name; apCount.textContent = a.count;
+  }
+  function swapViewfinder(src, goingDown, instant){
+    if (reduceMotion || instant){ vfImg.src = src; vfBlur.src = src; thumb.src = src; return; }
+    const OUT = goingDown ? 22 : -22, IN = goingDown ? -16 : 16;
+    vfImg.style.transition = `transform .1s ${EXIT_APP}, opacity .1s ${EXIT_APP}`;
+    vfImg.style.transform = `translateY(${OUT}px) scale(1.04)`; vfImg.style.opacity = "0";
+    setTimeout(() => {
+      vfImg.src = src; vfBlur.src = src; thumb.src = src;
+      vfImg.style.transition = "none";
+      vfImg.style.transform = `translateY(${IN}px) scale(1.04)`;
+      void vfImg.offsetHeight;
+      vfImg.style.transition = `transform .24s ${ENTER}, opacity .24s ${ENTER}`;
+      vfImg.style.transform = "translateY(0) scale(1)"; vfImg.style.opacity = "1";
+    }, 100);
+  }
+  function goToAlbum(next, goingDown, instant){
+    /* any other route to a new album (the grid) retires the coach first */
+    if (coach !== "done" && coach !== "committing") dismissCoach();
+    const target = ((next % ALBUMS.length) + ALBUMS.length) % ALBUMS.length;
+    if (target === idx) return;
+    if (busy){ pendingAlbum = { target, goingDown }; return; }
+    busy = true; idx = target;
+    const a = ALBUMS[idx];
+    cycleLabel(label, a.name, goingDown, instant);
+    swapViewfinder(a.cover, goingDown, instant);
+    cycleBlock(panel, goingDown, () => renderGrid(a), "x", instant);
+    syncDrawer();
+    setTimeout(() => {
+      busy = false;
+      if (pendingAlbum){ const p = pendingAlbum; pendingAlbum = null; goToAlbum(p.target, p.goingDown); }
+    }, (reduceMotion || instant) ? 0 : 380);
+  }
+
+  /* ---- first-run coach: the demo pulls the slider halfway and parks; the visitor
+         finishes it (drag or tap); after that the bar is the app's own swipe ---- */
+  const vf = phone.querySelector(".mp-vf");
+  const mpTop = phone.querySelector(".mp-top");
+  vf.classList.add("coached");
+  vf.insertAdjacentHTML("beforeend", `
+    <div class="coach-veil"></div>
+    <p class="coach-text">Swipe the slider<br>to change the album</p>
+    <img class="vf-next" id="vfNext" src="${ALBUMS[1].cover}" alt="" draggable="false">`);
+  mpTop.insertAdjacentHTML("beforeend", `
+    <div class="coach-rail" id="coachRail">
+      <span class="coach-bar"></span>
+      <span class="coach-stem"></span>
+      <button class="coach-knob" id="coachKnob" aria-label="Pull down to switch to the next album">
+        <img src="assets/knob.svg" alt="" draggable="false">
+      </button>
+    </div>`);
+  const rail = document.getElementById("coachRail");
+  const knob = document.getElementById("coachKnob");
+  const stem = rail.querySelector(".coach-stem");
+  const bar = rail.querySelector(".coach-bar");
+  const vfNext = document.getElementById("vfNext");
+  const coachVeil = vf.querySelector(".coach-veil");
+  const coachText = vf.querySelector(".coach-text");
+
+  /* idle → demo → parked ⇄ dragging ⇄ settling → committing → done */
+  let coach = "idle", t = 0, TRAVEL = 90, KC = 20, OFF0 = 0;
+  let demoRaf = 0, springRaf = 0, drag = null;
+  const smooth01 = x => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
+
+  function measureCoach(){
+    if (!rail.isConnected) return;
+    const kw = rail.offsetWidth || 62, before = TRAVEL;
+    TRAVEL = kw / .172 * .26;
+    KC = kw * 25.5 / 62;
+    OFF0 = mpTop.getBoundingClientRect().bottom - vf.getBoundingClientRect().top;
+    if (before > 0) t = t / before * TRAVEL;
+  }
+  function renderCoach(){
+    knob.style.transform = bar.style.transform = `translateY(${t.toFixed(1)}px)`;
+    stem.style.transform = `scaleY(${Math.max(0, (KC + t) / (KC + TRAVEL)).toFixed(4)})`;
+    /* the next photo comes down from the top, its bottom edge riding the knob */
+    const edge = (OFF0 + KC) * smooth01(t / 14) + t;
+    vfNext.style.transform = `translateY(calc(-100% + ${Math.max(0, edge).toFixed(1)}px))`;
+  }
+  function park(){ coach = "parked"; rail.classList.add("parked"); }
+
+  /* the slow first half */
+  function runDemo(){
+    if (coach !== "idle") return;
+    coach = "demo";
+    const from = t, to = TRAVEL / 2, dur = 1150, t0 = performance.now();
+    const ease = k => k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    (function step(now){
+      if (coach !== "demo") return;
+      const k = Math.min(1, (now - t0) / dur);
+      t = from + (to - from) * ease(k); renderCoach();
+      if (k < 1) demoRaf = requestAnimationFrame(step); else park();
+    })(t0);
+  }
+  /* let go early: a critically damped spring back to the halfway park */
+  function springTo(target){
+    cancelAnimationFrame(springRaf);
+    if (reduceMotion){ t = target; renderCoach(); park(); return; }
+    coach = "settling";
+    const k = Math.pow(2 * Math.PI / .38, 2), c = 2 * Math.sqrt(k);
+    let v = 0, last = performance.now();
+    (function step(now){
+      if (coach !== "settling") return;
+      const dt = Math.min(.032, Math.max(.001, (now - last) / 1000)); last = now;
+      v += (-k * (t - target) - c * v) * dt; t += v * dt;
+      if (Math.abs(t - target) < .3 && Math.abs(v) < 5){ t = target; renderCoach(); park(); return; }
+      renderCoach(); springRaf = requestAnimationFrame(step);
+    })(last);
+  }
+
+  /* the visitor's own pull: 1:1 with the finger, rubber-banded past either end */
+  function startDrag(e, el){
+    if (coach === "committing" || coach === "done") return false;
+    cancelAnimationFrame(demoRaf); cancelAnimationFrame(springRaf);
+    rail.classList.remove("parked");
+    coach = "dragging";
+    drag = { id:e.pointerId, y0:e.clientY, t0:t, moved:0, lastY:e.clientY, lastT:performance.now(), v:0 };
+    try { el.setPointerCapture(e.pointerId); } catch(_){}
+    return true;
+  }
+  knob.addEventListener("pointerdown", e => { if (startDrag(e, knob)) e.preventDefault(); });
+  /* the pill itself also pulls the slider until the coach is done */
+  mpTop.addEventListener("pointerdown", e => {
+    if (coach === "done" || coach === "committing" || !e.target.closest(".mock-pill")) return;
+    e.stopPropagation();
+    startDrag(e, pill);
+  }, {capture:true});
+  document.addEventListener("pointermove", e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const dy = e.clientY - drag.y0, now = performance.now(), dt = Math.max(1, now - drag.lastT);
+    drag.moved = Math.max(drag.moved, Math.abs(dy));
+    drag.v = .8 * ((e.clientY - drag.lastY) / dt) + .2 * drag.v;
+    drag.lastY = e.clientY; drag.lastT = now;
+    const raw = drag.t0 + dy;
+    t = raw < 0 ? rubberband(raw, 40) : raw > TRAVEL ? TRAVEL + rubberband(raw - TRAVEL, 40) : raw;
+    renderCoach();
+  });
+  function endDrag(e){
+    if (!drag || e.pointerId !== drag.id) return;
+    const tap = drag.moved < 6, v = drag.v;
+    drag = null;
+    if (tap || t > TRAVEL * .62 || (v > .45 && t > TRAVEL * .3)) commit();
+    else springTo(TRAVEL / 2);
+  }
+  document.addEventListener("pointerup", endDrag);
+  document.addEventListener("pointercancel", e => { if (drag && e.pointerId === drag.id){ drag = null; springTo(TRAVEL / 2); } });
+  /* keyboard: Enter / Space / ArrowDown finish it, on the knob or the pill */
+  knob.addEventListener("click", e => { if (e.detail === 0) commit(); });
+  mpTop.addEventListener("keydown", e => {
+    if (coach === "done" || coach === "committing") return;
+    if (e.key === "ArrowDown" || ((e.key === "Enter" || e.key === " ") && e.target === pill)){
+      e.preventDefault(); e.stopPropagation(); commit();
+    } else if (e.key === "ArrowUp"){ e.preventDefault(); e.stopPropagation(); }
+  }, {capture:true});
+
+  function removeCoachDom(){
+    [rail, coachVeil, coachText, vfNext].forEach(el => el.remove());
+    vf.classList.remove("coached");
+  }
+  /* the first finish is slowed so the moment lands; every later swipe runs at the app's speed */
+  function commit(){
+    if (coach === "committing" || coach === "done") return;
+    cancelAnimationFrame(demoRaf); cancelAnimationFrame(springRaf); drag = null;
+    coach = "committing"; busy = true;
+    rail.classList.remove("parked");
+    const next = (idx + 1) % ALBUMS.length, a = ALBUMS[next];
+    const hadFocus = document.activeElement === knob || document.activeElement === pill;
+    idx = next;
+    syncDrawer();
+    const finish = () => {
+      vfImg.src = a.cover; vfBlur.src = a.cover; thumb.src = a.cover;
+      const cleanup = () => {
+        vfImg.style.transition = "none";
+        removeCoachDom();
+        void vfImg.offsetHeight;
+        vfImg.style.transition = "";
+        coach = "done"; busy = false;
+        camHint.textContent = "Swipe the bar to switch albums, or tap it to pick one."; camHint.classList.add("show");
+        if (hadFocus) pill.focus({preventScroll:true});
+        if (pendingAlbum){ const p = pendingAlbum; pendingAlbum = null; goToAlbum(p.target, p.goingDown); }
+      };
+      (vfImg.decode ? vfImg.decode().catch(() => {}) : Promise.resolve()).then(cleanup);
+    };
+    if (reduceMotion){
+      cycleLabel(label, a.name, true, true);
+      cycleBlock(panel, true, () => renderGrid(a), "x", true);
+      finish();
+      return;
+    }
+    /* label: the app's cycle, slowed for this one moment */
+    label.style.transition = `transform .17s ${EXIT_APP}, opacity .17s ${EXIT_APP}`;
+    label.style.transform = "translateY(16px)"; label.style.opacity = "0";
+    setTimeout(() => {
+      label.textContent = a.name;
+      label.style.transition = "none"; label.style.transform = "translateY(-12px)";
+      void label.offsetHeight;
+      label.style.transition = `transform .36s ${ENTER}, opacity .36s ${ENTER}`;
+      label.style.transform = "translateY(0)"; label.style.opacity = "1";
+    }, 170);
+    cycleBlock(panel, true, () => renderGrid(a), "x");
+    coachText.style.opacity = "0";
+    const EASE = "cubic-bezier(.22,1,.36,1)";
+    knob.style.transition = bar.style.transition = stem.style.transition = `transform .3s ${EASE}`;
+    t = TRAVEL; knob.style.transform = bar.style.transform = `translateY(${t.toFixed(1)}px)`; stem.style.transform = "scaleY(1)";
+    rail.style.opacity = "0";
+    vfNext.style.transition = `transform .52s ${EASE}`;
+    vfNext.style.transform = "translateY(0)";
+    setTimeout(finish, 540);
+  }
+  /* another route to a new album (the grid) retires the coach without a switch of its own */
+  function dismissCoach(){
+    if (coach === "done" || coach === "committing") return;
+    cancelAnimationFrame(demoRaf); cancelAnimationFrame(springRaf); drag = null;
+    coach = "done";
+    removeCoachDom();
+    camHint.textContent = "Swipe the bar to switch albums, or tap it to pick one."; camHint.classList.add("show");
+  }
+
+  function initCoach(){
+    measureCoach();
+    if (reduceMotion){ t = TRAVEL / 2; renderCoach(); park(); return; }
+    renderCoach();
+    let armed = false;
+    new IntersectionObserver((es, io) => {
+      for (const e of es) if (e.isIntersecting && !armed){
+        armed = true; io.disconnect();
+        setTimeout(runDemo, 600);
+      }
+    }, {threshold:.35}).observe(section);
+  }
+  addEventListener("resize", () => { if (coach !== "done"){ measureCoach(); renderCoach(); } });
+
+  attachPillDrag(pill,
+    (goingDown, instant) => goToAlbum(idx + (goingDown ? 1 : -1), goingDown, instant),
+    () => openDrawer());
+
+  /* the panel: horizontal swipe tours the albums */
+  let sx = null, sCycled = false;
+  apGrid.addEventListener("pointerdown", e => { sx = e.clientX; sCycled = false; });
+  apGrid.addEventListener("pointermove", e => {
+    if (sx === null || sCycled) return;
+    const dx = e.clientX - sx;
+    if (Math.abs(dx) > 44){ sCycled = true; goToAlbum(idx + (dx < 0 ? 1 : -1), dx < 0); }
+  });
+  const sEnd = () => { sx = null; };
+  apGrid.addEventListener("pointerup", sEnd); apGrid.addEventListener("pointercancel", sEnd);
+  apGrid.addEventListener("dragstart", e => e.preventDefault());
+
+  /* the shutter: native black-frame capture, the thumbnail takes the frame */
+  shutter.addEventListener("click", () => {
+    flash.classList.add("on");
+    requestAnimationFrame(() => requestAnimationFrame(() => flash.classList.remove("on")));
+    cycleBlock(thumbBtn, true, () => {}, "y");
+  });
+  thumbBtn.addEventListener("click", () => {});
+
+  /* the drawer (AlbumPickerSheet replica) */
+  let hideTimer = null;
+  function syncDrawer(){
+    drawerRows.innerHTML = ALBUMS.map((a, i) => `
+      <button class="mpd-row" data-album="${i}">
+        <img src="${a.cover}" alt="">
+        <b>${a.name}</b>
+        <span>${a.count.replace(" items","")}</span>
+        ${i === idx
+          ? '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#E97344" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'
+          : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>'}
+      </button>`).join("");
+    drawerRows.querySelectorAll(".mpd-row").forEach(row => row.addEventListener("click", () => {
+      const t = parseInt(row.dataset.album, 10);
+      closeDrawer();
+      if (t !== idx) goToAlbum(t, t > idx);
+    }));
+  }
+  function openDrawer(){
+    if (hideTimer){ clearTimeout(hideTimer); hideTimer = null; }
+    syncDrawer(); drawer.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => drawer.classList.add("open")));
+  }
+  function closeDrawer(){
+    drawer.classList.remove("open");
+    if (hideTimer) clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => { drawer.hidden = true; hideTimer = null; }, reduceMotion ? 0 : 360);
+  }
+  drawer.addEventListener("click", e => { if (e.target === drawer) closeDrawer(); });
+  addEventListener("keydown", e => { if (e.key === "Escape" && !drawer.hidden) closeDrawer(); });
+
+  /* modes */
+  const hl = document.getElementById("mpModeHl");
+  const modeBtns = document.querySelectorAll(".mp-modes button");
+  modeBtns.forEach((btn, i) => btn.addEventListener("click", () => {
+    modeBtns.forEach(b => b.setAttribute("aria-pressed", b === btn ? "true" : "false"));
+    hl.style.transform = `translateX(${i * 100}%)`;
+    phone.classList.toggle("video", btn.dataset.mode === "video");
+    phone.classList.toggle("portrait", btn.dataset.mode === "portrait");
+  }));
+
+  renderGrid(ALBUMS[0]);
+  syncDrawer();
+  initCoach();
+})();
+
+/* ============================================================ FAVORITES */
+(function initFavorites(){
+  const grid = document.getElementById("galGrid");
+  const strip = document.getElementById("favStrip");
+  const empty = document.getElementById("favEmpty");
+  const count = document.getElementById("favCount");
+  let favs = 0;
+  renderGalleryGrid(grid, ALBUMS[0].photos, (on, photo) => {
+    if (on){
+      favs++; empty.hidden = true;
+      const img = document.createElement("img"); img.src = photo; img.alt = ""; img.dataset.photo = photo;
+      strip.appendChild(img);
+    } else {
+      favs = Math.max(0, favs - 1);
+      strip.querySelector(`img[data-photo="${CSS.escape(photo)}"]`)?.remove();
+      if (favs === 0) empty.hidden = false;
+    }
+    count.textContent = favs === 1 ? "1 photo" : `${favs} photos`;
+  });
+  if (forceStatic){ const b = grid.querySelectorAll(".heart-btn"); [2, 3].forEach(i => b[i] && b[i].click()); }
+})();
+
+/* ============================================================ FILM — drag to compare */
+(function initFilm(){
+  const stage = document.getElementById("cmpStage");
+  const graded = document.getElementById("cmpGraded");
+  const handle = document.getElementById("cmpHandle");
+  const chipLabel = document.getElementById("filmChipLabel");
+  const strip = document.getElementById("filmStrip");
+  let current = 7, x = 50;
+
+  function setX(v){
+    x = Math.max(2, Math.min(98, v));
+    stage.style.setProperty("--x", x + "%");
+    handle.setAttribute("aria-valuenow", String(Math.round(x)));
+  }
+  function fromEvent(e){ const r = stage.getBoundingClientRect(); setX((e.clientX - r.left) / r.width * 100); }
+  let down = false;
+  stage.addEventListener("pointerdown", e => { down = true; stage.classList.add("dragging"); stage.setPointerCapture(e.pointerId); fromEvent(e); });
+  stage.addEventListener("pointermove", e => { if (down) fromEvent(e); });
+  const up = () => { down = false; stage.classList.remove("dragging"); };
+  stage.addEventListener("pointerup", up); stage.addEventListener("pointercancel", up);
+  handle.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft"){ e.preventDefault(); setX(x - 4); }
+    if (e.key === "ArrowRight"){ e.preventDefault(); setX(x + 4); }
+  });
+  graded.style.filter = STOCKS[current][1];
+
+  STOCKS.forEach(([name, filter, dot], i) => {
+    if (i === 0) return; /* Original is always the left half */
+    const b = document.createElement("button");
+    b.className = "stock-chip";
+    b.setAttribute("aria-pressed", i === current ? "true" : "false");
+    b.innerHTML = `<i style="background:${dot}"></i>${name}`;
+    b.addEventListener("click", () => {
+      if (i === current) return;
+      const goingDown = i > current; current = i;
+      graded.style.filter = filter;
+      cycleLabel(chipLabel, name, goingDown, false, EXIT_PAGE);
+      strip.querySelectorAll(".stock-chip").forEach(c => c.setAttribute("aria-pressed", c === b ? "true" : "false"));
+      if (x > 80) setX(50);
+    });
+    strip.appendChild(b);
+  });
+  const prev = document.getElementById("stripPrev"), next = document.getElementById("stripNext");
+  const updatePaddles = () => { prev.disabled = strip.scrollLeft < 30; next.disabled = strip.scrollLeft > strip.scrollWidth - strip.clientWidth - 30; };
+  prev.addEventListener("click", () => strip.scrollBy({left:-360, behavior: reduceMotion ? "auto" : "smooth"}));
+  next.addEventListener("click", () => strip.scrollBy({left:360, behavior: reduceMotion ? "auto" : "smooth"}));
+  strip.addEventListener("scroll", updatePaddles, {passive:true});
+  strip.addEventListener("wheel", e => {
+    if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+    const max = strip.scrollWidth - strip.clientWidth;
+    const canScroll = e.deltaY > 0 ? strip.scrollLeft < max - 1 : strip.scrollLeft > 1;
+    if (!canScroll) return;
+    strip.scrollLeft += e.deltaY; e.preventDefault();
+  }, {passive:false});
+  updatePaddles();
+})();
+})();
+</script>
+</body>
+</html>
