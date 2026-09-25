@@ -1428,11 +1428,11 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
 
     <div class="imp-side reveal" data-delay="1">
       <h3>All in the bar. <span class="nobr">Your call what stays.</span></h3>
-      <p>Tap the Pholio mark in an album's corner to take it out of the Pholio bar. The album isn't deleted, and you can add it back from its ··· menu.</p>
+      <p>Tap the Pholio mark on an album to take it out of the Pholio bar. The album isn't deleted, and you can add it back from the More button in its other corner.</p>
       <div class="imp-bar" id="impBar">
         <img class="imp-bar-img" id="impBarImg" src="assets/album-family.jpg" alt="" draggable="false">
         <img class="imp-bar-img" id="impBarImg2" src="assets/album-family.jpg" alt="" draggable="false" style="opacity:0">
-        <p class="imp-bar-empty" id="impBarEmpty" aria-hidden="true">Tap ··· on an album to add it back.</p>
+        <p class="imp-bar-empty" id="impBarEmpty" aria-hidden="true">Tap More on an album to add it back.</p>
         <div class="imp-bar-top">
           <div class="mock-pill" id="impPill" role="button" tabindex="0"
                aria-label="Pholio bar: Family. Swipe up or down, or use the arrow keys, to switch albums.">
@@ -2432,7 +2432,7 @@ const HIGHLIGHTS = [
       <div class="lib-cover"><img src="${a.cover}" alt="" loading="lazy" draggable="false"></div>
       <b>${a.name}</b><small>${a.count}</small>
       <button class="lib-mark" data-i="${i}"><span class="lib-disc">${MARK}</span></button>
-      <button class="lib-more" data-i="${i}" aria-haspopup="menu" aria-expanded="false" aria-label="Options for ${a.name}"><span class="lib-disc">${DOTS}</span></button>
+      <button class="lib-more" data-i="${i}" aria-haspopup="menu" aria-expanded="false" aria-label="More options for ${a.name}"><span class="lib-disc">${DOTS}</span></button>
     </div>`).join("");
   const cards = Array.from(grid.children);
   const marks = cards.map(c => c.querySelector(".lib-mark"));
