@@ -994,6 +994,8 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
 .wl.sending .wl-submit{ cursor:progress; }
 .wl-note{ margin-top:14px; min-height:1.5em; font-size:13px; color:rgba(29,29,31,.68); }
 .wl.error .wl-note{ color:var(--wl-error); }
+.wl-privacy{ color:inherit; text-decoration:underline; text-underline-offset:2px; }
+.wl.error .wl-privacy{ display:none; }
 .wl.error .wl-field{ border-color:var(--wl-error); }
 .wl.error .wl-field:focus-within{ box-shadow:0 0 0 4px rgba(196,52,45,.14); }
 .wl-done{
@@ -1101,7 +1103,7 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
     <a href="#library">Your library</a>
     <a href="#pricing">Pricing</a>
   </div>
-  <a class="nav-cta" href="#get">Coming soon</a>
+  <a class="nav-cta" href="#get">Join the waitlist</a>
 </nav>
 
 <!-- ================= HERO ================= -->
@@ -1495,20 +1497,31 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
 </section>
 
 <!-- ================= FINAL ================= -->
-<section class="final" id="get" aria-label="Get Pholio">
+<section class="final" id="get" aria-label="Join the waitlist">
   <div class="wrap">
     <img src="assets/appicon-512.png" alt="Pholio app icon" class="reveal">
     <h2 class="reveal">Every photo, <span class="nobr">in its <em>place</em>.</span></h2>
-    <p class="oneliner reveal" data-delay="1">Pholio Camera is coming to the App Store.</p>
-    <div class="hero-ctas reveal" data-delay="2">
-      <!-- Swap for the official linked App Store badge at launch -->
-      <span class="store-badge" role="img" aria-label="Coming soon to the App Store">
-        <svg width="26" height="30" viewBox="0 0 26 30" fill="#fff" aria-hidden="true"><path d="M21.6 15.9c0-3 2.5-4.5 2.6-4.6-1.4-2.1-3.6-2.3-4.4-2.4-1.9-.2-3.6 1.1-4.6 1.1-.9 0-2.4-1.1-4-1-2 0-3.9 1.2-5 3-2.1 3.7-.5 9.1 1.5 12.1 1 1.5 2.2 3.1 3.8 3 1.5-.1 2.1-1 3.9-1 1.8 0 2.4 1 4 1 1.6 0 2.7-1.5 3.7-3 1.2-1.7 1.6-3.3 1.7-3.4-.1-.1-3.2-1.3-3.2-4.8zM18.6 6.6c.8-1 1.4-2.4 1.2-3.8-1.2 0-2.7.8-3.5 1.8-.8.9-1.5 2.3-1.3 3.7 1.4.1 2.8-.7 3.6-1.7z"/></svg>
-        <span>
-          <span class="sb-top">Coming soon to the</span>
-          <span class="sb-bottom">App Store</span>
-        </span>
-      </span>
+    <p class="oneliner reveal" data-delay="1">Pholio Camera is coming to the App Store. Join the waitlist to hear when it's out.</p>
+    <!-- At launch, swap this for the official linked App Store badge.
+         The form posts to a Kit form (app.kit.com/forms/<id>/subscriptions); publish.sh refuses to ship KIT_FORM_ID. -->
+    <div class="wl reveal" data-delay="2" id="wl">
+      <form class="wl-form" id="wlForm" action="https://app.kit.com/forms/9962583/subscriptions" method="POST" novalidate>
+        <div class="wl-field">
+          <label class="vh" for="wlEmail">Your email</label>
+          <input id="wlEmail" name="email_address" type="email" required placeholder="Your email"
+                 autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"
+                 aria-describedby="wlNote">
+          <button class="wl-submit" type="submit"><span>Join the waitlist</span><span aria-hidden="true">Joining…</span></button>
+        </div>
+        <!-- bots fill every field; people never see this one. No name, so it is never sent -->
+        <div class="vh" aria-hidden="true"><input type="text" id="wlTrap" tabindex="-1" autocomplete="off"></div>
+        <p class="wl-note"><span id="wlNote" aria-live="polite">We'll email you at launch, and rarely after.</span> <a class="wl-privacy" href="privacy.html">Privacy</a></p>
+      </form>
+      <div class="wl-done" id="wlDone" tabindex="-1">
+        <span class="wl-check" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <p class="wl-done-title">Check your inbox.</p>
+        <p class="wl-done-note">Confirm your email, and you're on the list.</p>
+      </div>
     </div>
   </div>
 </section>
@@ -1521,7 +1534,7 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
       <!-- Point at the real support page before launch (pholio.me/help is 404 today) -->
       <span class="footer-soon">Help (coming at launch)</span>
       <!-- Replace with the real privacy-policy link before launch -->
-      <span class="footer-soon">Privacy policy (coming at launch)</span>
+      <a href="privacy.html">Privacy policy</a>
     </div>
   </div>
 </footer>
@@ -2620,7 +2633,7 @@ const HIGHLIGHTS = [
 })();
 
 /* ============================================================ WAITLIST
-   Posts the form to its action URL (Formspree-style: FormData in, JSON status out).
+   Posts the form to a Kit form (FormData in, JSON {status} out; Kit sends the confirm email).
    Until a real https endpoint is set, local previews fake a signup so every state can be
    seen; publish.sh refuses to ship the placeholder, so the fake never goes live. */
 (function initWaitlist(){
@@ -2648,10 +2661,16 @@ const HIGHLIGHTS = [
     input.value = email;
     wl.classList.add("sending"); form.setAttribute("aria-busy", "true"); say(NOTE, false);
     const endpoint = form.getAttribute("action");
+    const trap = document.getElementById("wlTrap");
     try {
-      if (/^https:\/\//.test(endpoint)){
+      if (trap && trap.value){
+        /* a bot filled the hidden field: show success, send nothing */
+      } else if (!endpoint.includes("KIT_FORM_ID")){
         const res = await fetch(endpoint, {method:"POST", body:new FormData(form), headers:{Accept:"application/json"}});
-        if (!res.ok) throw new Error("waitlist " + res.status);
+        const data = await res.json().catch(() => ({}));
+        /* Kit's spam check: the visitor finishes the signup on Kit's own page */
+        if (data.status === "quarantined" && /^https:\/\//.test(data.url || "")){ location.assign(data.url); return; }
+        if (!res.ok || data.status !== "success") throw new Error("waitlist " + (data.status || res.status));
       } else {
         console.warn("Waitlist has no endpoint yet: faking a signup for this preview.");
         await new Promise(r => setTimeout(r, 700));
