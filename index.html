@@ -1503,12 +1503,13 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
     <h2 class="reveal">Every photo, <span class="nobr">in its <em>place</em>.</span></h2>
     <p class="oneliner reveal" data-delay="1">Pholio Camera is coming to the App Store. Join the waitlist to hear when it's out.</p>
     <!-- At launch, swap this for the official linked App Store badge.
-         The form posts to a Kit form (app.kit.com/forms/<id>/subscriptions); publish.sh refuses to ship KIT_FORM_ID. -->
+         The form posts to a Google Apps Script web app that writes to a Sheet (MK/LandingPage/waitlist/Code.gs);
+         publish.sh refuses to ship the APPS_SCRIPT_URL placeholder. -->
     <div class="wl reveal" data-delay="2" id="wl">
-      <form class="wl-form" id="wlForm" action="https://app.kit.com/forms/9962583/subscriptions" method="POST" novalidate>
+      <form class="wl-form" id="wlForm" action="https://script.google.com/macros/s/AKfycbxzpAz6WHz-oanq07NVN2MbaZXPYc9OIU-3RYIaD5GZNESGrRytcxxfWZmvA_q6CWwoSA/exec" method="POST" novalidate>
         <div class="wl-field">
           <label class="vh" for="wlEmail">Your email</label>
-          <input id="wlEmail" name="email_address" type="email" required placeholder="Your email"
+          <input id="wlEmail" name="email" type="email" required placeholder="Your email"
                  autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send"
                  aria-describedby="wlNote">
           <button class="wl-submit" type="submit"><span>Join the waitlist</span><span aria-hidden="true">Joining…</span></button>
@@ -1519,8 +1520,8 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
       </form>
       <div class="wl-done" id="wlDone" tabindex="-1">
         <span class="wl-check" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
-        <p class="wl-done-title">Check your inbox.</p>
-        <p class="wl-done-note">Confirm your email, and you're on the list.</p>
+        <p class="wl-done-title">You're on the list.</p>
+        <p class="wl-done-note">We'll email you when Pholio is on the App Store.</p>
       </div>
     </div>
   </div>
@@ -2633,7 +2634,7 @@ const HIGHLIGHTS = [
 })();
 
 /* ============================================================ WAITLIST
-   Posts the form to a Kit form (FormData in, JSON {status} out; Kit sends the confirm email).
+   Posts the form to a Google Apps Script web app that adds a row to a Sheet (JSON {ok} back).
    Until a real https endpoint is set, local previews fake a signup so every state can be
    seen; publish.sh refuses to ship the placeholder, so the fake never goes live. */
 (function initWaitlist(){
@@ -2665,12 +2666,12 @@ const HIGHLIGHTS = [
     try {
       if (trap && trap.value){
         /* a bot filled the hidden field: show success, send nothing */
-      } else if (!endpoint.includes("KIT_FORM_ID")){
-        const res = await fetch(endpoint, {method:"POST", body:new FormData(form), headers:{Accept:"application/json"}});
+      } else if (/^https:\/\//.test(endpoint)){
+        /* a plain form post with no custom headers, so there's no CORS preflight; Apps Script
+           redirects to googleusercontent.com, which lets the page read the JSON */
+        const res = await fetch(endpoint, {method:"POST", body:new URLSearchParams({email})});
         const data = await res.json().catch(() => ({}));
-        /* Kit's spam check: the visitor finishes the signup on Kit's own page */
-        if (data.status === "quarantined" && /^https:\/\//.test(data.url || "")){ location.assign(data.url); return; }
-        if (!res.ok || data.status !== "success") throw new Error("waitlist " + (data.status || res.status));
+        if (!res.ok || data.ok !== true) throw new Error("waitlist " + (data.error || res.status));
       } else {
         console.warn("Waitlist has no endpoint yet: faking a signup for this preview.");
         await new Promise(r => setTimeout(r, 700));
