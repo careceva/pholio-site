@@ -290,7 +290,8 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
 }
 #fs-bar{ left:57%; right:clamp(24px, 5vw, 72px); }
 #fs-widget{ left:60%; right:clamp(24px, 5vw, 72px); padding-top:16%; }
-#fs-gallery{ left:clamp(28px, 6.5vw, 96px); width:min(32%, 15em); }
+/* the column may run to 55% (the fan starts ~58%); h3/p stop at 15em like the other chapters */
+#fs-gallery{ left:clamp(28px, 6.5vw, 96px); right:45%; }
 .hl-copy h3, .hl-copy p{
   font-size:clamp(19px, 1.75vw, 25px); font-weight:600;
   letter-spacing:-.015em; line-height:1.32; text-wrap:pretty; max-width:15em;
@@ -1207,8 +1208,8 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
                 <span class="hl-acc" aria-hidden="true">
                   <span class="acc-lock"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a5 5 0 0 0-5 5V10h-.5A2.5 2.5 0 0 0 4 12.5v7A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5v-7a2.5 2.5 0 0 0-2.5-2.5H17V7.5a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0V10H9V7.5z"/></svg>Private</span>
                 </span>
-                <h3>We never see your photos.</h3>
-                <p>The gallery opens them from Apple Photos, right on your iPhone. Pholio never uploads them.</p>
+                <h3>We never see your&nbsp;photos.</h3>
+                <p>The gallery opens them from Apple Photos, right on your iPhone. Pholio never uploads&nbsp;them.</p>
                 <!-- True to the app: no network code of its own (RevenueCat only handles purchases), no login, no analytics or ad SDKs -->
                 <ul class="hl-facts">
                   <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No account</li>
