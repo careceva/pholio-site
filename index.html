@@ -309,6 +309,7 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
 }
 .acc-lock{ display:inline-flex; align-items:center; gap:7px; font-size:20px; font-weight:600; color:var(--text); }
 .acc-lock svg{ width:17px; height:auto; display:block; color:var(--orange); }
+.acc-lock .acc-lock-solo{ width:22px; }
 /* the privacy facts under the Gallery copy */
 .hl-facts{ list-style:none; display:flex; flex-direction:column; gap:8px; margin-top:22px; }
 .hl-facts li{ display:inline-flex; align-items:center; gap:7px; font-size:15px; font-weight:500; color:rgba(255,255,255,.78); }
@@ -1241,10 +1242,10 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
               </article>
               <article role="tabpanel" id="fs-gallery" aria-labelledby="ftab-gallery" hidden>
                 <span class="hl-acc" aria-hidden="true">
-                  <span class="acc-lock"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a5 5 0 0 0-5 5V10h-.5A2.5 2.5 0 0 0 4 12.5v7A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5v-7a2.5 2.5 0 0 0-2.5-2.5H17V7.5a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0V10H9V7.5z"/></svg>100% local</span>
+                  <span class="acc-lock"><svg class="acc-lock-solo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a5 5 0 0 0-5 5V10h-.5A2.5 2.5 0 0 0 4 12.5v7A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5v-7a2.5 2.5 0 0 0-2.5-2.5H17V7.5a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0V10H9V7.5z"/></svg></span>
                 </span>
-                <h3>Everything stays on your&nbsp;iPhone.</h3>
-                <p>Pholio uses your iPhone's own Photos library and albums. It&nbsp;never uploads your&nbsp;photos.</p>
+                <h3>100% local.</h3>
+                <p>All photos and videos are synced to your iPhone's&nbsp;library.</p>
                 <!-- True to the app: no network code of its own (RevenueCat only handles purchases), no login, no analytics or ad SDKs.
                      "Works offline": capture, saving and browsing need no network; iCloud-only originals download through iOS, as in Photos -->
                 <ul class="hl-facts">
