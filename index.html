@@ -389,6 +389,33 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
     margin-left:0; object-fit:contain; object-position:left bottom; translate:-10% 0;
   }
 }
+/* slide 1 — a live camera (placeholder footage until a real Pholio screen recording replaces it).
+   JS sizes the phone (--pw) so it runs a little past the folder's bottom edge, like the renders */
+.hl-screen.hl-live{ justify-content:flex-start; align-items:flex-start; padding:0 0 0 13%; }
+.hl-cam{ --pw:240px; flex:none; }
+.hl-cam .vf-drift{ position:absolute; inset:-3%; animation:hlDrift 6.5s ease-in-out infinite alternate; }   /* no hand holds a phone perfectly still */
+@keyframes hlDrift{ 0%{ transform:translate(0, 0) rotate(0deg); } 50%{ transform:translate(-.7%, .5%) rotate(.3deg); } 100%{ transform:translate(.6%, -.4%) rotate(-.25deg); } }
+.hl-cam .mp-vf video, .hl-cam .vf-seam{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.hl-cam .vf-seam{ opacity:0; transition:opacity .35s ease; }
+.hl-cam .vf-seam.on{ opacity:1; transition:none; }
+.hl-cam .mock-pill{ cursor:default; }
+.hl-cam .mp-thumb{ display:block; }
+.hl-cam .mp-thumb canvas{ display:block; width:100%; height:100%; }
+.hl-cam .mp-shutter i{ transition:transform .2s var(--ease-out); }
+.hl-cam .mp-shutter.press i{ transform:scale(.86); transition:transform .1s var(--ease-in); }
+.hl-cam .mp-modes span:not(.mp-mode-hl){
+  position:relative; z-index:1; flex:1; display:grid; place-items:center;
+  font-size:calc(var(--pw) * .03); font-weight:600; letter-spacing:.06em; color:rgba(255,255,255,.55);
+}
+.hl-cam .mp-modes span.on{ color:#fff; }
+/* iOS-style touch indicator: shows where the finger is, the way screen recordings do */
+.hl-touch{
+  position:absolute; z-index:12; left:0; top:0; width:calc(var(--pw) * .105); height:calc(var(--pw) * .105);
+  margin:calc(var(--pw) * -.0525) 0 0 calc(var(--pw) * -.0525); border-radius:50%; pointer-events:none; opacity:0;
+  background:rgba(170,170,176,.42); border:calc(var(--pw) * .0036) solid rgba(255,255,255,.8); box-shadow:0 2px 12px rgba(0,0,0,.28);
+}
+@media (max-width:900px){ .hl-screen.hl-live{ justify-content:center; padding:0; } }
+@media (prefers-reduced-motion: reduce){ .hl-cam .vf-drift{ animation:none; } }
 @media (max-width:340px){ .ftab-label{ font-size:11px; } }
 @media (min-width:901px){ .hl-controls{ display:none; } }
 .hl-play{ width:44px; height:44px; display:grid; place-items:center; margin-right:-4px; }
@@ -1106,6 +1133,8 @@ footer{ background:#f5f5f7; border-top:1px solid rgba(0,0,0,.12); padding:36px 0
 .footer-inner p{ font-size:13px; color:rgba(29,29,31,.68); }
 .footer-links{ display:flex; gap:24px; font-size:13px; color:rgba(29,29,31,.68); flex-wrap:wrap; align-items:center; }
 .footer-links a, .footer-soon{ display:inline-flex; align-items:center; min-height:44px; }
+.footer-credit{ display:inline-flex; align-items:center; }
+.footer-credit a{ text-decoration:underline; text-underline-offset:2px; }
 .footer-soon{ color:rgba(29,29,31,.62); cursor:default; }
 
 /* ============================================================ HOVER — only where a hover exists */
@@ -1233,7 +1262,7 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
                 <span class="hl-acc" aria-hidden="true">
                   <span class="acc-pill">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg>
-                    Rome
+                    Mia
                     <svg width="9" height="11" viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg>
                   </span>
                 </span>
@@ -1629,6 +1658,8 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
       <span class="footer-soon">Help (coming at launch)</span>
       <!-- Replace with the real privacy-policy link before launch -->
       <a href="privacy.html">Privacy policy</a>
+      <!-- Free stock licence: required while the placeholder clip is on the page (assets/hl-mia.mp4) -->
+      <span class="footer-credit">Stock video designed by&nbsp;<a href="https://www.magnific.com" rel="noopener">Magnific</a></span>
     </div>
   </div>
 </footer>
@@ -2016,18 +2047,21 @@ const HIGHLIGHTS = [
 
   /* ---- screens: the three mockup renders ---- */
   const MOCKS = [
-    { src:"assets/mockups-03.png", alt:"Close-up of an iPhone running Pholio, with the Rome album in the Pholio bar at the top of the viewfinder" },
+    { live:true, alt:"Pholio's camera filming a girl painting on the living-room floor, with the Mia album in the Pholio bar" },
     { src:"assets/mockups-02.png", alt:"Three iPhone screens of Pholio's gallery: a paused video, an album's photo grid, and the Library of albums" },
     { src:"assets/mockups-01.png", alt:"A hand holding an iPhone on the Lock Screen, with the flashlight and Pholio controls at the bottom" },
   ];
-  screensEl.innerHTML = MOCKS.map(m =>
+  /* chapter 1 is a live camera: stock footage stands in for the viewfinder until a real Pholio screen
+     recording replaces it (credited in the footer); the chrome is the camera section's own */
+  const CAM = m => `<div class="hl-screen hl-live"><div class="iphone hl-cam" role="img" aria-label="${m.alt}"><div class="ip-bezel"><div class="ip-screen" aria-hidden="true"><div class="ip-island"></div><div class="ip-status" aria-hidden="true"><span>9:41</span><span class="st-icons"> <svg viewBox="0 0 20 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg> <svg viewBox="0 0 16 12" fill="#fff"><path d="M8 9.6a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2zM8 6c1.6 0 3 .6 4.1 1.6l-1.3 1.3A4 4 0 0 0 8 7.8c-1 0-2 .4-2.8 1.1L3.9 7.6A5.8 5.8 0 0 1 8 6zm0-3.6c2.6 0 5 1 6.8 2.7l-1.3 1.3A7.7 7.7 0 0 0 8 4.2c-2 0-3.9.8-5.5 2.2L1.2 5.1A9.6 9.6 0 0 1 8 2.4z"/></svg> <svg viewBox="0 0 27 12" fill="none"><rect x=".5" y=".5" width="23" height="11" rx="3" stroke="#fff" stroke-opacity=".5"/><rect x="2" y="2" width="20" height="8" rx="1.8" fill="#fff"/><path d="M25 4v4a2 2 0 0 0 0-4z" fill="#fff" fill-opacity=".5"/></svg> </span></div><div class="cam-screen"><div class="mp-vf"><div class="vf-drift"><video muted playsinline preload="none" poster="assets/hl-mia.jpg" src="${forceStatic ? "" : "assets/hl-mia.mp4"}"></video><canvas class="vf-seam"></canvas></div><div class="vf-flash"></div></div><svg class="mp-flash" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg><div class="mp-top"><span class="mock-pill"><svg class="ic-folder" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg><span class="pill-label-clip"><span class="pill-label">Mia</span></span><svg class="ic-chev" viewBox="0 0 24 30" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg></span></div><div class="mp-bottom"><div class="mp-controls"><span class="mp-thumb"><canvas></canvas></span><span class="mp-shutter"><i></i></span><span class="mp-flip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.2-3M20 15a8 8 0 0 1-14.2 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></span></div><div class="mp-modes"><span class="mp-mode-hl"></span><span class="on">PHOTO</span><span>VIDEO</span><span>PORTRAIT</span></div></div></div><span class="hl-touch"></span><div class="ip-home"></div></div></div></div></div>`;
+  screensEl.innerHTML = MOCKS.map(m => m.live ? CAM(m) :
     `<div class="hl-screen"><img class="hl-mock" src="${m.src}" alt="${m.alt}" loading="${forceStatic ? "eager" : "lazy"}" draggable="false"></div>`
   ).join("");
   const screens = Array.from(screensEl.children);
 
   /* chapter-1 bleed: push the close-up's bottom 26px past the folder's bottom
      edge so the rounded body clips the PNG's raw crop, at every viewport */
-  const bleedImgs = [screens[0], screens[2]].map(sc => sc.querySelector(".hl-mock"));
+  const bleedImgs = [screens[0], screens[2]].map(sc => sc.querySelector(".hl-mock")).filter(Boolean);
   function setBleed(){
     const fb = body.getBoundingClientRect();
     const st = screensEl.getBoundingClientRect();
@@ -2085,6 +2119,7 @@ const HIGHLIGHTS = [
       const cv = smooth(Math.max(0, Math.min(1, 1 - Math.abs(d) * 1.85)));
       tints[i].style.opacity = vis.toFixed(3);
       screens[i].style.opacity = e.toFixed(3);
+      if (i === 0 && camApi) camApi.show(e > .5);
       screens[i].style.transform = `translateY(${(-d * 12).toFixed(1)}px) scale(${(.976 + .024 * e).toFixed(4)})`;
       screens[i].style.visibility = vis <= 0 ? "hidden" : "visible";
       copies[i].hidden = false;
@@ -2113,6 +2148,79 @@ const HIGHLIGHTS = [
   const narrowMQ = matchMedia("(max-width:900px)");
   const motionMQ = matchMedia("(prefers-reduced-motion: reduce)");
   const noMotion = () => forceStatic || motionMQ.matches;
+  /* ---- chapter 1: the live camera. Every few seconds a finger takes a photo (the screen blinks and the
+     thumbnail updates) or swipes the Pholio bar between Mia and Family. The clip's end dissolves into
+     its start, so the loop has no visible jump */
+  const camApi = (function liveCam(root){
+    if (!root) return null;
+    const v = root.querySelector("video"), seam = root.querySelector(".vf-seam"), flash = root.querySelector(".vf-flash");
+    const label = root.querySelector(".pill-label"), pill = root.querySelector(".mock-pill");
+    const shutter = root.querySelector(".mp-shutter"), thumb = root.querySelector(".mp-thumb canvas");
+    const touch = root.querySelector(".hl-touch"), scr = root.querySelector(".ip-screen");
+    const ALBUMS = ["Mia", "Family"];
+    let album = 0, shown = false, inView = false, last = 0;
+    /* a frame drawn "cover" into a canvas, at the canvas's own pixel size */
+    function cover(canvas, src, sw, sh){
+      const r = canvas.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+      if (!r.width || !sw) return;
+      canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
+      const k = Math.max(canvas.width / sw, canvas.height / sh), w = canvas.width / k, h = canvas.height / k;
+      try { canvas.getContext("2d").drawImage(src, (sw - w) / 2, (sh - h) / 2, w, h, 0, 0, canvas.width, canvas.height); } catch(e){}
+    }
+    const poster = new Image();
+    poster.onload = () => cover(thumb, poster, poster.naturalWidth, poster.naturalHeight);
+    poster.src = v.getAttribute("poster");
+    /* where an element's centre sits on the screen, in px from the screen's top-left */
+    const at = el => { const a = scr.getBoundingClientRect(), b = el.getBoundingClientRect(); return [b.left + b.width / 2 - a.left, b.top + b.height / 2 - a.top]; };
+    function tap(){
+      const [x, y] = at(shutter);
+      touch.animate([{ left:x + "px", top:y + "px", opacity:0, transform:"scale(.95)" }, { left:x + "px", top:y + "px", opacity:1, transform:"scale(1)", offset:.25 },
+        { left:x + "px", top:y + "px", opacity:1, transform:"scale(1)", offset:.6 }, { left:x + "px", top:y + "px", opacity:0, transform:"scale(.95)" }], { duration:420, easing:"ease-out" });
+      setTimeout(() => {
+        shutter.classList.add("press"); setTimeout(() => shutter.classList.remove("press"), 140);
+        flash.classList.add("on"); setTimeout(() => flash.classList.remove("on"), 90);
+        cover(thumb, v, v.videoWidth, v.videoHeight);
+      }, 110);
+    }
+    function swipe(){
+      const [x, y] = at(pill), d = scr.getBoundingClientRect().height * .045;
+      touch.animate([{ left:x + "px", top:(y - d / 2) + "px", opacity:0 }, { left:x + "px", top:(y - d / 2) + "px", opacity:1, offset:.18 },
+        { left:x + "px", top:(y + d / 2) + "px", opacity:1, offset:.7 }, { left:x + "px", top:(y + d / 2) + "px", opacity:0 }], { duration:560, easing:"ease-in-out" });
+      setTimeout(() => { album = 1 - album; cycleLabel(label, ALBUMS[album], true); }, 240);
+    }
+    /* seconds into the 6.65 s clip: a photo in Mia, swipe to Family, a photo there, swipe back */
+    const EV = [[1.25, tap], [2.65, swipe], [4.2, tap], [5.75, swipe]];
+    v.addEventListener("timeupdate", () => {
+      const t = v.currentTime;
+      if (t < last) last = 0;
+      EV.forEach(([at, fn]) => { if (last < at && t >= at && shown) fn(); });
+      last = t;
+    });
+    v.addEventListener("ended", () => {
+      cover(seam, v, v.videoWidth, v.videoHeight); seam.classList.add("on");
+      v.currentTime = 0; last = 0;
+      v.play().then(() => requestAnimationFrame(() => seam.classList.remove("on"))).catch(() => seam.classList.remove("on"));
+    });
+    const sync = () => {
+      const go = shown && inView && !document.hidden && !noMotion();
+      if (go && v.paused) v.play().catch(() => {});
+      else if (!go && !v.paused) v.pause();
+    };
+    new IntersectionObserver(es => { inView = es[es.length - 1].isIntersecting; sync(); }, { threshold:.3 }).observe(body);
+    document.addEventListener("visibilitychange", sync);
+    /* the phone runs ~4.5% past the folder's bottom edge (rim and home bar under the fold) */
+    function size(){
+      const box = screensEl.getBoundingClientRect(), fb = body.getBoundingClientRect();
+      if (!box.height || !fb.height) return;
+      const narrow = narrowMQ.matches, top = narrow ? 8 : box.height * .06;
+      let pw = (fb.bottom - box.top - top) / .955 * 430 / 932;
+      pw = Math.min(pw, box.width * (narrow ? .7 : .4));
+      root.style.setProperty("--pw", pw.toFixed(1) + "px");
+      root.style.marginTop = top.toFixed(1) + "px";
+    }
+    addEventListener("resize", size); size();
+    return { show(on){ if (on !== shown){ shown = on; sync(); } }, size, sync };
+  })(screens[0].querySelector(".hl-cam"));
   let live = !narrowMQ.matches && !noMotion();
   function syncMode(){
     live = !narrowMQ.matches && !noMotion();
