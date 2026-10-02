@@ -391,18 +391,83 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
 }
 /* slide 1 — a live camera (placeholder footage until a real Pholio screen recording replaces it).
    JS sizes the phone (--pw) so it runs a little past the folder's bottom edge, like the renders */
-.hl-screen.hl-live{ justify-content:flex-start; align-items:flex-start; padding:0 0 0 13%; }
-.hl-cam{ --pw:240px; flex:none; }
-.hl-cam .vf-drift{ position:absolute; inset:-3%; animation:hlDrift 6.5s ease-in-out infinite alternate; }   /* no hand holds a phone perfectly still */
-@keyframes hlDrift{ 0%{ transform:translate(0, 0) rotate(0deg); } 50%{ transform:translate(-.7%, .5%) rotate(.3deg); } 100%{ transform:translate(.6%, -.4%) rotate(-.25deg); } }
+.hl-screen.hl-live{ justify-content:flex-start; align-items:flex-start; padding:0 0 0 19%; perspective:2200px; perspective-origin:10% 35%; }
+.hl-stage3d{ position:relative; flex:none; transform-origin:50% 60%; }
+/* desktop: a three-quarter view facing the copy. JS writes the transform directly while the chapter hands
+   over (the phone turns further away); this is the resting pose */
+@media (min-width:901px){
+  .hl-stage3d{ transform:rotateY(22deg) rotateX(4deg) rotateZ(-1.5deg); }
+}
+/* the screen lights the folder around it */
+.hl-glow{
+  position:absolute; z-index:-1; pointer-events:none; left:50%; top:50%; width:150%; aspect-ratio:1; border-radius:50%;
+  transform:translate(-50%, -50%); background:center / cover no-repeat; filter:blur(70px) saturate(1.4); opacity:.72;
+}
+.hl-cam{ --pw:240px; --t:calc(var(--pw) * .0042); flex:none; }
+/* device fidelity: anodized orange frame with a chamfer highlight, a thin black bezel, metallic buttons */
+.hl-cam{
+  border-radius:calc(var(--pw) * .175); padding:calc(var(--pw) * .0095);
+  background:
+    linear-gradient(200deg, rgba(255,240,228,.7) 0%, rgba(255,240,228,0) 9%),
+    linear-gradient(118deg, rgba(255,236,222,.5) 0%, rgba(255,236,222,0) 11%, rgba(255,236,222,0) 86%, rgba(255,236,222,.3) 100%),
+    linear-gradient(180deg, #f3a066 0%, #d8692f 20%, #bb5320 52%, #d26429 84%, #f0a06b 100%);
+  box-shadow:
+    inset 0 0 0 calc(var(--pw) * .0022) rgba(255,220,196,.8), inset 0 0 0 calc(var(--pw) * .0062) rgba(110,36,8,.42),
+    0 calc(var(--pw) * .12) calc(var(--pw) * .3) rgba(0,0,0,.6), 0 calc(var(--pw) * .03) calc(var(--pw) * .06) rgba(0,0,0,.42);
+}
+/* the left wall shows the frame's thickness in the three-quarter view: seven steps darkening toward the back */
+@media (min-width:901px){
+  .hl-cam{ box-shadow:
+    inset 0 0 0 calc(var(--pw) * .0022) rgba(255,220,196,.8), inset 0 0 0 calc(var(--pw) * .0062) rgba(110,36,8,.42),
+    calc(var(--t) * -1) 0 0 #c0561f, calc(var(--t) * -2) 0 0 #b54f1d, calc(var(--t) * -3) 0 0 #aa491b, calc(var(--t) * -4) 0 0 #9f4419,
+    calc(var(--t) * -5) 0 0 #943e17, calc(var(--t) * -6) 0 0 #8a3915, calc(var(--t) * -7) 0 0 #7d3312,
+    calc(var(--pw) * -.06) calc(var(--pw) * .1) calc(var(--pw) * .32) rgba(0,0,0,.62), 0 calc(var(--pw) * .03) calc(var(--pw) * .06) rgba(0,0,0,.42); }
+}
+.hl-cam::before{
+  left:calc(var(--pw) * -.0075); width:calc(var(--pw) * .0085); border-radius:calc(var(--pw) * .004) 0 0 calc(var(--pw) * .004);
+  background:
+    linear-gradient(90deg, #7c300d, #e98a4d 55%, #c35a24) 0 17.5% / 100% 3.6% no-repeat,
+    linear-gradient(90deg, #7c300d, #e98a4d 55%, #c35a24) 0 23.6% / 100% 6.4% no-repeat,
+    linear-gradient(90deg, #7c300d, #e98a4d 55%, #c35a24) 0 31.8% / 100% 6.4% no-repeat;
+}
+@media (min-width:901px){ .hl-cam::before{ left:calc(var(--pw) * -.0075 - var(--t) * 7); } }
+.hl-cam::after{
+  right:calc(var(--pw) * -.0075); width:calc(var(--pw) * .0085); top:26%; height:11%;
+  background:linear-gradient(270deg, #7c300d, #e98a4d 55%, #c35a24); border-radius:0 calc(var(--pw) * .004) calc(var(--pw) * .004) 0;
+}
+.hl-cam .ip-bezel{ background:#000; padding:calc(var(--pw) * .0165); border-radius:calc(var(--pw) * .166); box-shadow:inset 0 0 0 calc(var(--pw) * .0025) rgba(255,255,255,.07); }
+.hl-cam .ip-screen{ border-radius:calc(var(--pw) * .148); }
+.hl-cam .ip-island{ box-shadow:inset 0 0 0 1px rgba(255,255,255,.04); }
+/* the cover glass: one faint sweep of light, nothing that reads as glare */
+.hl-cam .ip-screen::after{ content:""; position:absolute; inset:0; z-index:20; pointer-events:none; background:linear-gradient(118deg, rgba(255,255,255,.075) 0%, rgba(255,255,255,0) 30%); }
+/* no hand holds a phone perfectly still: three independent, unequal periods so the sway never stops dead.
+   It only runs while the clip plays */
+@property --dx{ syntax:"<percentage>"; inherits:false; initial-value:0%; }
+@property --dy{ syntax:"<percentage>"; inherits:false; initial-value:0%; }
+.hl-cam .vf-drift{
+  position:absolute; inset:-3%; translate:var(--dx) var(--dy);
+  animation:hlDx 7.1s ease-in-out infinite alternate, hlDy 5.3s ease-in-out infinite alternate, hlDr 9.7s ease-in-out infinite alternate;
+  animation-play-state:paused;
+}
+.hl-cam.rolling .vf-drift{ animation-play-state:running; }
+@keyframes hlDx{ from{ --dx:-.7%; } to{ --dx:.6%; } }
+@keyframes hlDy{ from{ --dy:.5%; } to{ --dy:-.4%; } }
+@keyframes hlDr{ from{ rotate:.3deg; } to{ rotate:-.25deg; } }
 .hl-cam .mp-vf video, .hl-cam .vf-seam{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-.hl-cam .vf-seam{ opacity:0; transition:opacity .35s ease; }
-.hl-cam .vf-seam.on{ opacity:1; transition:none; }
-.hl-cam .mock-pill{ cursor:default; }
+/* the loop seam: the clip's last frame dissolves into its first; a touch of blur hides the double exposure */
+.hl-cam .vf-seam{ opacity:0; filter:blur(2px); transition:opacity .35s ease, filter .35s ease; }
+.hl-cam .vf-seam.on{ opacity:1; filter:none; transition:none; }
+/* decorative: the screen takes no touches, so a swipe that starts on it scrolls the page */
+.hl-cam .ip-screen{ pointer-events:none; }
+.hl-cam .mock-pill{ cursor:default; touch-action:auto; }
+/* the app's capture blink (CameraViewModel): in 40 ms ease-in, held 100 ms, out 80 ms ease-out */
+.hl-cam .vf-flash{ transition:opacity 80ms ease-out; }
+.hl-cam .vf-flash.on{ opacity:1; transition:opacity 40ms ease-in; }
 .hl-cam .mp-thumb{ display:block; }
 .hl-cam .mp-thumb canvas{ display:block; width:100%; height:100%; }
-.hl-cam .mp-shutter i{ transition:transform .2s var(--ease-out); }
-.hl-cam .mp-shutter.press i{ transform:scale(.86); transition:transform .1s var(--ease-in); }
+/* the app's shutter press (CameraControlsView): the whole button to .9 over 80 ms ease-in-out */
+.hl-cam .mp-shutter{ transition:transform 80ms ease-in-out; }
+.hl-cam .mp-shutter.press{ transform:scale(.9); }
 .hl-cam .mp-modes span:not(.mp-mode-hl){
   position:relative; z-index:1; flex:1; display:grid; place-items:center;
   font-size:calc(var(--pw) * .03); font-weight:600; letter-spacing:.06em; color:rgba(255,255,255,.55);
@@ -414,7 +479,7 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   margin:calc(var(--pw) * -.0525) 0 0 calc(var(--pw) * -.0525); border-radius:50%; pointer-events:none; opacity:0;
   background:rgba(170,170,176,.42); border:calc(var(--pw) * .0036) solid rgba(255,255,255,.8); box-shadow:0 2px 12px rgba(0,0,0,.28);
 }
-@media (max-width:900px){ .hl-screen.hl-live{ justify-content:center; padding:0; } }
+@media (max-width:900px){ .hl-screen.hl-live{ justify-content:center; padding:0; perspective:none; } .hl-glow{ width:135%; top:42%; opacity:.6; } }
 @media (prefers-reduced-motion: reduce){ .hl-cam .vf-drift{ animation:none; } }
 @media (max-width:340px){ .ftab-label{ font-size:11px; } }
 @media (min-width:901px){ .hl-controls{ display:none; } }
@@ -2053,7 +2118,7 @@ const HIGHLIGHTS = [
   ];
   /* chapter 1 is a live camera: stock footage stands in for the viewfinder until a real Pholio screen
      recording replaces it (credited in the footer); the chrome is the camera section's own */
-  const CAM = m => `<div class="hl-screen hl-live"><div class="iphone hl-cam" role="img" aria-label="${m.alt}"><div class="ip-bezel"><div class="ip-screen" aria-hidden="true"><div class="ip-island"></div><div class="ip-status" aria-hidden="true"><span>9:41</span><span class="st-icons"> <svg viewBox="0 0 20 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg> <svg viewBox="0 0 16 12" fill="#fff"><path d="M8 9.6a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2zM8 6c1.6 0 3 .6 4.1 1.6l-1.3 1.3A4 4 0 0 0 8 7.8c-1 0-2 .4-2.8 1.1L3.9 7.6A5.8 5.8 0 0 1 8 6zm0-3.6c2.6 0 5 1 6.8 2.7l-1.3 1.3A7.7 7.7 0 0 0 8 4.2c-2 0-3.9.8-5.5 2.2L1.2 5.1A9.6 9.6 0 0 1 8 2.4z"/></svg> <svg viewBox="0 0 27 12" fill="none"><rect x=".5" y=".5" width="23" height="11" rx="3" stroke="#fff" stroke-opacity=".5"/><rect x="2" y="2" width="20" height="8" rx="1.8" fill="#fff"/><path d="M25 4v4a2 2 0 0 0 0-4z" fill="#fff" fill-opacity=".5"/></svg> </span></div><div class="cam-screen"><div class="mp-vf"><div class="vf-drift"><video muted playsinline preload="none" poster="assets/hl-mia.jpg" src="${forceStatic ? "" : "assets/hl-mia.mp4"}"></video><canvas class="vf-seam"></canvas></div><div class="vf-flash"></div></div><svg class="mp-flash" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg><div class="mp-top"><span class="mock-pill"><svg class="ic-folder" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg><span class="pill-label-clip"><span class="pill-label">Mia</span></span><svg class="ic-chev" viewBox="0 0 24 30" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg></span></div><div class="mp-bottom"><div class="mp-controls"><span class="mp-thumb"><canvas></canvas></span><span class="mp-shutter"><i></i></span><span class="mp-flip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.2-3M20 15a8 8 0 0 1-14.2 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></span></div><div class="mp-modes"><span class="mp-mode-hl"></span><span class="on">PHOTO</span><span>VIDEO</span><span>PORTRAIT</span></div></div></div><span class="hl-touch"></span><div class="ip-home"></div></div></div></div></div>`;
+  const CAM = m => `<div class="hl-screen hl-live"><div class="hl-stage3d"><div class="hl-glow" style="background-image:url(assets/hl-mia.jpg)"></div><div class="iphone hl-cam" role="img" aria-label="${m.alt}"><div class="ip-bezel"><div class="ip-screen" aria-hidden="true"><div class="ip-island"></div><div class="ip-status" aria-hidden="true"><span>9:41</span><span class="st-icons"> <svg viewBox="0 0 20 12" fill="#fff"><rect x="0" y="8" width="3" height="4" rx=".8"/><rect x="5" y="5.5" width="3" height="6.5" rx=".8"/><rect x="10" y="3" width="3" height="9" rx=".8"/><rect x="15" y="0" width="3" height="12" rx=".8"/></svg> <svg viewBox="0 0 16 12" fill="#fff"><path d="M8 9.6a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2zM8 6c1.6 0 3 .6 4.1 1.6l-1.3 1.3A4 4 0 0 0 8 7.8c-1 0-2 .4-2.8 1.1L3.9 7.6A5.8 5.8 0 0 1 8 6zm0-3.6c2.6 0 5 1 6.8 2.7l-1.3 1.3A7.7 7.7 0 0 0 8 4.2c-2 0-3.9.8-5.5 2.2L1.2 5.1A9.6 9.6 0 0 1 8 2.4z"/></svg> <svg viewBox="0 0 27 12" fill="none"><rect x=".5" y=".5" width="23" height="11" rx="3" stroke="#fff" stroke-opacity=".5"/><rect x="2" y="2" width="20" height="8" rx="1.8" fill="#fff"/><path d="M25 4v4a2 2 0 0 0 0-4z" fill="#fff" fill-opacity=".5"/></svg> </span></div><div class="cam-screen"><div class="mp-vf"><div class="vf-drift"><video muted playsinline preload="none" poster="assets/hl-mia.jpg" src="${forceStatic ? "" : "assets/hl-mia.mp4"}"></video><canvas class="vf-seam"></canvas></div><div class="vf-flash"></div></div><svg class="mp-flash" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg><div class="mp-top"><span class="mock-pill"><svg class="ic-folder" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg><span class="pill-label-clip"><span class="pill-label">Mia</span></span><svg class="ic-chev" viewBox="0 0 24 30" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg></span></div><div class="mp-bottom"><div class="mp-controls"><span class="mp-thumb"><canvas></canvas></span><span class="mp-shutter"><i></i></span><span class="mp-flip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.2-3M20 15a8 8 0 0 1-14.2 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></span></div><div class="mp-modes"><span class="mp-mode-hl"></span><span class="on">PHOTO</span><span>VIDEO</span><span>PORTRAIT</span></div></div></div><span class="hl-touch"></span><div class="ip-home"></div></div></div></div></div></div>`;
   screensEl.innerHTML = MOCKS.map(m => m.live ? CAM(m) :
     `<div class="hl-screen"><img class="hl-mock" src="${m.src}" alt="${m.alt}" loading="${forceStatic ? "eager" : "lazy"}" draggable="false"></div>`
   ).join("");
@@ -2114,12 +2179,17 @@ const HIGHLIGHTS = [
     /* screens cross-dissolve inside the one device; copy rises through */
     for (let i = 0; i < N; i++){
       const d = p - i, vis = Math.max(0, 1 - Math.abs(d));
-      /* widened plateau keeps combined coverage near 1 mid-dissolve (no brightness dip) */
-      const e = smooth(Math.min(1, vis * 1.3));
+      /* phones: a widened plateau keeps combined coverage near 1 mid-dissolve (no brightness dip).
+         desktop: each render is gone (|d| = .455) before the next chapter's copy, which shares its side, arrives */
+      const e = narrow ? smooth(Math.min(1, vis * 1.3)) : smooth(Math.max(0, Math.min(1, 1 - Math.abs(d) * 2.2)));
       const cv = smooth(Math.max(0, Math.min(1, 1 - Math.abs(d) * 1.85)));
       tints[i].style.opacity = vis.toFixed(3);
       screens[i].style.opacity = e.toFixed(3);
-      if (i === 0 && camApi) camApi.show(e > .5);
+      if (i === 0 && camApi){
+        camApi.show(e > 0, Math.abs(d) < .05);
+        camApi.turn(narrow || noMotion() ? 0 : smooth(Math.max(0, Math.min(1, d))), narrow);
+        if (vis <= 0) camApi.rewind();
+      }
       screens[i].style.transform = `translateY(${(-d * 12).toFixed(1)}px) scale(${(.976 + .024 * e).toFixed(4)})`;
       screens[i].style.visibility = vis <= 0 ? "hidden" : "visible";
       copies[i].hidden = false;
@@ -2141,7 +2211,9 @@ const HIGHLIGHTS = [
     /* the device lifts a little as each chapter hands over */
     const frac = p - Math.floor(p);
     /* both terms are continuous and zero at whole chapters — no mid-chapter snap */
-    phone.style.transform = `translateY(${(-7 * Math.sin(frac * Math.PI)).toFixed(2)}px) rotate(${(Math.sin(frac * Math.PI * 2) * 0.55).toFixed(3)}deg)`;
+    /* (no wobble on the way out of chapter 1: the live camera already turns) */
+    const wob = Math.floor(p) === 0 ? 0 : Math.sin(frac * Math.PI * 2) * 0.55;
+    phone.style.transform = `translateY(${(-7 * Math.sin(frac * Math.PI)).toFixed(2)}px) rotate(${wob.toFixed(3)}deg)`;
   }
 
   /* ============================ drivers: scroll on desktop, a tween on the fallback */
@@ -2158,42 +2230,64 @@ const HIGHLIGHTS = [
     const shutter = root.querySelector(".mp-shutter"), thumb = root.querySelector(".mp-thumb canvas");
     const touch = root.querySelector(".hl-touch"), scr = root.querySelector(".ip-screen");
     const ALBUMS = ["Mia", "Family"];
-    let album = 0, shown = false, inView = false, last = 0;
+    /* shown: the chapter is visible at all; armed: it has settled, so the scripted finger may act; held: the
+       visitor paused the phone rotator */
+    let album = 0, shown = false, armed = false, held = false, inView = false, last = 0, rewound = true;
     /* a frame drawn "cover" into a canvas, at the canvas's own pixel size */
     function cover(canvas, src, sw, sh){
-      const r = canvas.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
+      const r = canvas.getBoundingClientRect(), dpr = Math.min(3, devicePixelRatio || 1);
       if (!r.width || !sw) return;
       canvas.width = Math.round(r.width * dpr); canvas.height = Math.round(r.height * dpr);
       const k = Math.max(canvas.width / sw, canvas.height / sh), w = canvas.width / k, h = canvas.height / k;
       try { canvas.getContext("2d").drawImage(src, (sw - w) / 2, (sh - h) / 2, w, h, 0, 0, canvas.width, canvas.height); } catch(e){}
     }
-    const poster = new Image();
-    poster.onload = () => cover(thumb, poster, poster.naturalWidth, poster.naturalHeight);
-    poster.src = v.getAttribute("poster");
-    /* where an element's centre sits on the screen, in px from the screen's top-left */
-    const at = el => { const a = scr.getBoundingClientRect(), b = el.getBoundingClientRect(); return [b.left + b.width / 2 - a.left, b.top + b.height / 2 - a.top]; };
+    /* each album keeps its own newest photo, the way the app's thumbnail follows the selected album */
+    const img = src => { const i = new Image(); i.src = src; return i; };
+    const SEED = [img(v.getAttribute("poster")), img("assets/album-family.jpg")];
+    let shots = SEED.slice();
+    const drawThumb = () => { const s = shots[album]; if (s.naturalWidth || s.width) cover(thumb, s, s.naturalWidth || s.width, s.naturalHeight || s.height); };
+    SEED[0].addEventListener("load", () => { if (album === 0) drawThumb(); });
+    /* where an element's centre sits on the screen, in its own layout space (the 3D turn doesn't move it) */
+    const at = el => { let x = el.offsetWidth / 2, y = el.offsetHeight / 2, n = el; while (n && n !== scr){ x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return [x, y]; };
+    const T = (x, y, s) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${s})`;
+    const IN = "cubic-bezier(.23,1,.32,1)", TRAVEL = "cubic-bezier(.77,0,.175,1)";
+    /* the finger lands (105 ms), the shutter goes down at 110 ms and the photo is taken on release at 250 ms,
+       as in the app; the finger lifts from 252 ms */
     function tap(){
       const [x, y] = at(shutter);
-      touch.animate([{ left:x + "px", top:y + "px", opacity:0, transform:"scale(.95)" }, { left:x + "px", top:y + "px", opacity:1, transform:"scale(1)", offset:.25 },
-        { left:x + "px", top:y + "px", opacity:1, transform:"scale(1)", offset:.6 }, { left:x + "px", top:y + "px", opacity:0, transform:"scale(.95)" }], { duration:420, easing:"ease-out" });
+      touch.animate([
+        { transform:T(x, y, .95), opacity:0, easing:IN }, { transform:T(x, y, 1), opacity:1, offset:.25 },
+        { transform:T(x, y, 1), opacity:1, offset:.6, easing:IN }, { transform:T(x, y, .95), opacity:0 }], { duration:420, easing:"linear" });
       setTimeout(() => {
-        shutter.classList.add("press"); setTimeout(() => shutter.classList.remove("press"), 140);
-        flash.classList.add("on"); setTimeout(() => flash.classList.remove("on"), 90);
-        cover(thumb, v, v.videoWidth, v.videoHeight);
+        shutter.classList.add("press");
+        setTimeout(() => {
+          shutter.classList.remove("press");
+          flash.classList.add("on"); setTimeout(() => flash.classList.remove("on"), 140);
+          const c = document.createElement("canvas"); c.width = v.videoWidth; c.height = v.videoHeight;
+          try { c.getContext("2d").drawImage(v, 0, 0); shots[album] = c; } catch(e){}
+          drawThumb();
+        }, 140);
       }, 110);
     }
+    /* the finger drags on the chevron (the whole row takes the drag in the app, so the name stays readable);
+       the bar follows it, rubber-banded, and springs back on lift. Down to Family, back up to Mia */
     function swipe(){
-      const [x, y] = at(pill), d = scr.getBoundingClientRect().height * .045;
-      touch.animate([{ left:x + "px", top:(y - d / 2) + "px", opacity:0 }, { left:x + "px", top:(y - d / 2) + "px", opacity:1, offset:.18 },
-        { left:x + "px", top:(y + d / 2) + "px", opacity:1, offset:.7 }, { left:x + "px", top:(y + d / 2) + "px", opacity:0 }], { duration:560, easing:"ease-in-out" });
-      setTimeout(() => { album = 1 - album; cycleLabel(label, ALBUMS[album], true); }, 240);
+      const [cx, y] = at(pill), x = cx + pill.offsetWidth / 2 - root.offsetWidth * .065;
+      const down = album === 0, s = down ? 1 : -1, d = scr.offsetHeight * .045, pull = s * rubberband(d * 1.6, 40);
+      touch.animate([
+        { transform:T(x, y - s * d / 2, 1), opacity:0, easing:IN }, { transform:T(x, y - s * d / 2, 1), opacity:1, offset:.18, easing:TRAVEL },
+        { transform:T(x, y + s * d / 2, 1), opacity:1, offset:.7, easing:IN }, { transform:T(x, y + s * d / 2, 1), opacity:0 }], { duration:560, easing:"linear" });
+      pill.animate([
+        { transform:"translateY(0)" }, { transform:"translateY(0)", offset:.144, easing:TRAVEL },
+        { transform:`translateY(${pull.toFixed(1)}px)`, offset:.56, easing:"cubic-bezier(.32,.72,0,1)" }, { transform:"translateY(0)" }], { duration:700, easing:"linear" });
+      setTimeout(() => { album = 1 - album; cycleLabel(label, ALBUMS[album], down); drawThumb(); }, 240);
     }
     /* seconds into the 6.65 s clip: a photo in Mia, swipe to Family, a photo there, swipe back */
     const EV = [[1.25, tap], [2.65, swipe], [4.2, tap], [5.75, swipe]];
     v.addEventListener("timeupdate", () => {
       const t = v.currentTime;
       if (t < last) last = 0;
-      EV.forEach(([at, fn]) => { if (last < at && t >= at && shown) fn(); });
+      EV.forEach(([at, fn]) => { if (last < at && t >= at && armed) fn(); });
       last = t;
     });
     v.addEventListener("ended", () => {
@@ -2201,25 +2295,56 @@ const HIGHLIGHTS = [
       v.currentTime = 0; last = 0;
       v.play().then(() => requestAnimationFrame(() => seam.classList.remove("on"))).catch(() => seam.classList.remove("on"));
     });
+    v.addEventListener("playing", () => root.classList.add("rolling"));
+    v.addEventListener("pause", () => root.classList.remove("rolling"));
     const sync = () => {
-      const go = shown && inView && !document.hidden && !noMotion();
+      const go = shown && inView && !held && !document.hidden && !noMotion();
       if (go && v.paused) v.play().catch(() => {});
       else if (!go && !v.paused) v.pause();
     };
     new IntersectionObserver(es => { inView = es[es.length - 1].isIntersecting; sync(); }, { threshold:.3 }).observe(body);
     document.addEventListener("visibilitychange", sync);
-    /* the phone runs ~4.5% past the folder's bottom edge (rim and home bar under the fold) */
+    motionMQ.addEventListener?.("change", sync);
+    /* the phone's bottom tenth (modes row, home bar) runs under the folder's edge; the shutter stays in */
+    const stage = root.parentNode;
+    let lastW = 0, lastTurn = -1;
     function size(){
+      if (narrowMQ.matches && innerWidth === lastW) return;   /* a phone's URL bar collapsing isn't a resize here */
+      lastW = innerWidth;
       const box = screensEl.getBoundingClientRect(), fb = body.getBoundingClientRect();
       if (!box.height || !fb.height) return;
       const narrow = narrowMQ.matches, top = narrow ? 8 : box.height * .06;
-      let pw = (fb.bottom - box.top - top) / .955 * 430 / 932;
-      pw = Math.min(pw, box.width * (narrow ? .7 : .4));
+      let pw = (fb.bottom - box.top - top) / .9 * 430 / 932;
+      pw = Math.min(pw, box.width * (narrow ? .74 : .42));
       root.style.setProperty("--pw", pw.toFixed(1) + "px");
-      root.style.marginTop = top.toFixed(1) + "px";
+      stage.style.marginTop = top.toFixed(1) + "px";
+      lastTurn = -1;
     }
     addEventListener("resize", size); size();
-    return { show(on){ if (on !== shown){ shown = on; sync(); } }, size, sync };
+    return {
+      show(on, settled){ armed = on && settled; if (on){ rewound = false; } if (on !== shown){ shown = on; sync(); } },
+      /* written straight to the transform (no inherited custom property per frame). The left wall's
+         thickness grows with the turn the way a real edge does (tan of the angle) */
+      turn(d, narrow){
+        if (narrow){ if (lastTurn !== -2){ stage.style.transform = ""; root.style.removeProperty("--t"); lastTurn = -2; } return; }
+        if (Math.abs(d - lastTurn) < .001) return;
+        lastTurn = d;
+        const deg = 22 + d * 14, pw = root.offsetWidth;
+        stage.style.transform = `rotateY(${deg.toFixed(2)}deg) rotateX(4deg) rotateZ(-1.5deg) translateX(${(-4 * d).toFixed(2)}%)`;
+        root.style.setProperty("--t", (pw * .0042 * Math.tan(deg * Math.PI / 180) / Math.tan(22 * Math.PI / 180)).toFixed(2) + "px");
+      },
+      /* off screen: back to the story's start, so every visit opens on Mia with the first photo to come */
+      rewind(){
+        if (rewound) return;
+        rewound = true;
+        if (!v.paused) v.pause();
+        try { v.currentTime = 0; } catch(e){}
+        last = 0; album = 0; shots = SEED.slice();
+        cycleLabel(label, ALBUMS[0], true, true); drawThumb();
+      },
+      hold(on){ held = on; sync(); },
+      size, sync,
+    };
   })(screens[0].querySelector(".hl-cam"));
   let live = !narrowMQ.matches && !noMotion();
   function syncMode(){
@@ -2240,7 +2365,11 @@ const HIGHLIGHTS = [
     render(seg + t2);
   }
   addEventListener("scroll", () => { if (live && !raf) raf = requestAnimationFrame(fromScroll); }, {passive:true});
-  addEventListener("resize", () => { measureLayout(); syncMode(); });
+  let lastResizeW = innerWidth;
+  addEventListener("resize", () => {
+    if (narrowMQ.matches && innerWidth === lastResizeW) return;   /* a phone's URL bar collapsing isn't a resize here */
+    lastResizeW = innerWidth; measureLayout(); syncMode();
+  });
   narrowMQ.addEventListener?.("change", syncMode);
   motionMQ.addEventListener?.("change", syncMode);
 
@@ -2310,6 +2439,7 @@ const HIGHLIGHTS = [
     userPaused = !userPaused;
     if (!userPaused && elapsed >= DWELL) elapsed = 0;
     paintButton(); wake();
+    if (camApi) camApi.hold(userPaused);
   });
   new IntersectionObserver(es => { folderInView = es[es.length - 1].isIntersecting; wake(); }, {threshold:.5}).observe(body);
   document.addEventListener("visibilitychange", wake);
