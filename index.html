@@ -415,19 +415,22 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   }
 }
 /* the screen lights the folder around it: the footage's colours, blurred to a wash, let through a soft radial mask.
-   The mask carries a fine grain in its alpha (a noise tile, multiplied in): on the dark folder a clean falloff
-   steps in visible rings, and the grain dithers them away at the pixel */
+   On the dark folder a clean falloff steps in visible rings, so the mask adds a grain: a faint noise tile, held
+   inside a soft envelope and added to the falloff (not multiplied: it must stay a level or so strong where the
+   light is faintest, which is where rings show, and it vanishes where the mask is already full) */
 .hl-glow{
   position:absolute; z-index:-1; pointer-events:none; left:50%; top:50%; width:220%; aspect-ratio:1;
   transform:translate(-50%, -50%); background:center / cover no-repeat; filter:blur(40px) saturate(1.4); opacity:.72;
   -webkit-mask-image:
     radial-gradient(circle closest-side, #000 30%, rgba(0,0,0,.72) 48%, rgba(0,0,0,.42) 64%, rgba(0,0,0,.16) 82%, transparent 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' stitchTiles='stitch' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .16 .84'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23g)'/%3E%3C/svg%3E");
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' stitchTiles='stitch' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23g)'/%3E%3C/svg%3E"),
+    radial-gradient(circle closest-side, #000 60%, transparent 96%);
   mask-image:
     radial-gradient(circle closest-side, #000 30%, rgba(0,0,0,.72) 48%, rgba(0,0,0,.42) 64%, rgba(0,0,0,.16) 82%, transparent 100%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' stitchTiles='stitch' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .16 .84'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23g)'/%3E%3C/svg%3E");
-  -webkit-mask-size:100% 100%, 128px 128px; mask-size:100% 100%, 128px 128px;
-  -webkit-mask-composite:source-in; mask-composite:intersect;
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' stitchTiles='stitch' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23g)'/%3E%3C/svg%3E"),
+    radial-gradient(circle closest-side, #000 60%, transparent 96%);
+  -webkit-mask-size:100% 100%, 128px 128px, 100% 100%; mask-size:100% 100%, 128px 128px, 100% 100%;
+  -webkit-mask-composite:source-over, source-in; mask-composite:add, intersect;
 }
 .hl-cam{ --pw:240px; flex:none; }
 /* device fidelity: anodized orange frame with a chamfer highlight, a thin black bezel, metallic buttons */
