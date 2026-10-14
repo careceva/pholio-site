@@ -219,17 +219,18 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   .hero-pause.paused .ic-pause{ display:none; }
 }
 
-/* ============================================================ HIGHLIGHTS — a scroll-driven folder, four chapters */
+/* ============================================================ HIGHLIGHTS — a folder that turns its own pages, four chapters */
 .hl{ position:relative; background:linear-gradient(to top, #000 0%, #110f0d 96%); }
-.hl-track{ position:relative; height:calc(100svh + 285svh); }   /* 95svh of scroll per chapter hand-over */
+/* one screen tall: the title and the whole folder in view at once */
 .hl-stage{
-  position:sticky; top:0; height:100svh;
+  position:relative; height:100svh;
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   gap:clamp(56px, 6.5vh, 84px);
   padding:clamp(80px, 11vh, 124px) 0 clamp(20px, 4vh, 52px);
 }
 .hl-title{ width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto; flex:none; }
 .folder{
+  --tabs-x:clamp(14px, 3.4vw, 48px);   /* where the tab row starts: the play/pause, then the ribbons */
   position:relative; width:min(var(--content-w), calc(100% - 48px)); margin-inline:auto;
   padding-top:var(--tab-h); flex:1 1 auto; min-height:0; display:flex; flex-direction:column;
   user-select:none; -webkit-user-select:none;
@@ -238,7 +239,10 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   position:absolute; left:0; right:0; top:calc(var(--tab-h) - 34px); height:90px;
   background:var(--folder-back); border-radius:var(--r-folder) var(--r-folder) 0 0;
 }
-.folder-tabs{ position:absolute; top:0; left:clamp(14px, 3.4vw, 48px); right:0; height:var(--tab-h); z-index:2; }
+.folder-tabs{ position:absolute; top:0; left:calc(var(--tabs-x) + 46px); right:0; height:var(--tab-h); z-index:2; }
+/* the rotator's play/pause, just before the first ribbon: a 36px disc in a 44px hit area, the disc where the
+   row starts and level with the ribbons' labels, 10px clear of the first one */
+.folder > .hl-play{ position:absolute; z-index:4; left:calc(var(--tabs-x) - 4px); top:calc(var(--tab-h) - 42px); margin:0; }
 .tab-measure{ position:absolute; visibility:hidden; pointer-events:none; width:var(--tab-w); height:var(--tab-h); }
 /* ribbons grow and slide continuously with the scroll; only transform moves.
    JS owns their transform in every mode; no CSS transition may fight the drivers.
@@ -290,7 +294,7 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   display:flex; flex-direction:column; justify-content:center;
   will-change:transform, opacity;
 }
-#fs-bar{ left:57%; right:clamp(24px, 5vw, 72px); }
+#fs-bar{ left:clamp(28px, 6.5vw, 96px); right:52%; }
 #fs-widget{ left:60%; right:clamp(24px, 5vw, 72px); padding-top:16%; }
 /* the column may run to 55% (the fan starts ~58%); h3/p stop at 15em like the other chapters */
 #fs-gallery{ left:clamp(28px, 6.5vw, 96px); right:45%; }
@@ -301,6 +305,9 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
 }
 .hl-copy h3{ color:var(--text); }
 .hl-copy p{ margin-top:0; color:var(--text-2); }
+/* chapter 1 on desktop: the copy on the left, the phone beside it shows the real Pholio bar, so the copy drops its
+   accessory pill */
+@media (min-width:901px){ #fs-bar .hl-acc{ display:none; } }
 /* the small accessory above each block: pill / iOS mark / Lock Screen controls */
 .hl-acc{ display:flex; align-items:center; gap:10px; margin-bottom:16px; }
 .acc-pill{
@@ -330,12 +337,6 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
 .hl-screens{ position:absolute; inset:0; z-index:1; }
 .hl-screen{ position:absolute; inset:0; opacity:0; will-change:opacity, transform; display:flex; }
 .hl-mock{ object-fit:contain; user-select:none; -webkit-user-select:none; }
-/* slide 1 — the close-up bleeds off the folder's bottom-left (JS measures --bleed) */
-.hl-screen.s-bar{ justify-content:flex-start; align-items:flex-end; padding-left:2%; }
-.hl-screen.s-bar .hl-mock{
-  height:88.5%; max-width:52%; object-position:left bottom;
-  transform:translateY(26px);
-}
 /* slide 2 — the triple fan on the right */
 .hl-screen.s-gallery{ justify-content:flex-end; align-items:center; padding-right:4%; }
 .hl-screen.s-gallery .hl-mock{ height:97%; max-width:56%; }
@@ -346,21 +347,25 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   transform:translateY(26px);
 }
 
-/* chapter 3 — one big iPhone on the right, its top cut by the folder's top edge and its rounded bottom sitting above
-   the folder's bottom (Apple's device-from-above layout), showing the Activity drawer. On entering the slide it swings
-   in on a hinge at its top, showing its top part, then rises until the drawer is in view. JS sizes --sh-pw and places
-   it; .sh-lift carries the rise, .sh-tilt the swing */
+/* chapters 1 and 3 — one big iPhone, flat on, cut by one edge of the folder (Apple's device layout). JS sizes --hl-pw
+   and places it; .hl-lift and .hl-tilt carry its entrance (chapter 3's swing hinges on the phone's top) */
+.hl-lift{ position:relative; flex:none; will-change:transform; }
+.hl-tilt{ transform-origin:50% 0; will-change:transform; }
+.hl-lift .hl-glow{ opacity:.45; }
+.hl-lift .hl-cam{ --pw:var(--hl-pw, 300px); }
+/* chapter 1 — a big phone beside its copy (under it on phones), its top in view and the rest running off the
+   folder's bottom edge (Apple's device layout), revealed on arrival (see "the reveal" in the script). On desktop it
+   is centred in the room the copy leaves (the copy's lines end near 40%), so the gap to the copy and the margin to
+   the folder's edge come out alike. A live camera, with placeholder footage until a real Pholio screen recording
+   replaces it */
+.hl-screen.s-bar{ justify-content:center; align-items:flex-start; padding:0; }
+@media (min-width:901px){ .hl-screen.s-bar{ padding-left:42%; } }
+.s-bar .hl-glow{ top:34%; }   /* the light sits on the part in view: the top 68% */
+.s-bar .hl-cam{ transform-origin:50% 34%; }   /* the reveal's settle is centred on the part in view too */
+/* chapter 3 — on the right, its top cut by the folder's top edge and its rounded bottom sitting above the folder's
+   bottom, showing the Activity drawer. It swings in showing its top part, then rises until the drawer is in view */
 .hl-screen.s-shared{ justify-content:flex-end; align-items:flex-start; padding:0 9% 0 0; overflow:hidden; }
-.sh-lift{ position:relative; flex:none; will-change:transform; }
-.sh-tilt{ transform-origin:50% 0; will-change:transform; }
-.sh-lift .hl-glow{ opacity:.45; top:62%; }
-.s-shared .hl-cam{ --pw:var(--sh-pw, 300px); --t:0px; }
-.s-shared .hl-cam{
-  box-shadow:
-    inset 0 0 0 calc(var(--pw) * .0022) rgba(255,220,196,.8), inset 0 0 0 calc(var(--pw) * .0062) rgba(110,36,8,.42),
-    0 calc(var(--pw) * .12) calc(var(--pw) * .3) rgba(0,0,0,.6), 0 calc(var(--pw) * .03) calc(var(--pw) * .06) rgba(0,0,0,.42);
-}
-.s-shared .hl-cam::before{ left:calc(var(--pw) * -.0075); }
+.s-shared .hl-glow{ top:62%; }
 /* the screen is a real capture (no status bar of its own; the frame draws it), pinned to the top */
 .sh-shot{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 0; display:block; }
 
@@ -370,14 +375,11 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   :root{ --tab-w:min(150px, calc((100vw - 62px) / 2.6)); --tab-h:46px; }
   .ftab-label .t-long{ display:none; }
   .ftab-label .t-short{ display:inline; }
-  .hl-track{ height:auto; }
-  .hl-stage{ position:static; height:auto; padding:var(--section-pad) 0; gap:26px; }
+  .hl-stage{ height:auto; padding:var(--section-pad) 0; gap:26px; }
   .hl-title{ align-self:flex-start; }
   .folder{ display:block; }
   .ftab-label{ font-size:12px; bottom:7px; gap:5px; }
   .tab-rule{ width:34px; }
-  /* the rotator's play/pause, under the folder's right edge: a 36px disc in a 44px hit area */
-  .hl-controls{ display:flex; justify-content:flex-end; width:min(var(--content-w), calc(100% - 48px)); margin:-14px auto 0; }
   /* tabs + body fit one screen under the nav (60px pill + gutters); the copy sits on top
      and the mockup fills whatever height is left, edge to edge. The renders are width-bound
      on phones (they want a stage about as tall as the card is wide), so the card also stops
@@ -396,9 +398,6 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   .hl-copy p{ font-size:16px; }
   .hl-facts{ flex-direction:row; flex-wrap:wrap; gap:6px 18px; margin-top:16px; }
   .hl-phone{ position:relative; inset:auto; flex:1 1 auto; min-height:280px; margin:12px -24px 0; }
-  /* slide 1 — the close-up, centred, bleeding off the bottom edge */
-  .hl-screen.s-bar{ justify-content:center; padding:0 8px; }
-  .hl-screen.s-bar .hl-mock{ height:100%; max-width:100%; object-position:center bottom; }
   /* slide 2 — the fan, centred (the PNG carries ~12% clear space top and bottom) */
   .hl-screen.s-gallery{ justify-content:center; padding:0 16px; }
   .hl-screen.s-gallery .hl-mock{ height:110%; max-width:100%; }
@@ -415,21 +414,22 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
     margin-left:0; object-fit:contain; object-position:left bottom; translate:-10% 0;
   }
 }
-/* slide 1 — a live camera (placeholder footage until a real Pholio screen recording replaces it).
-   JS sizes the phone (--pw) so it runs a little past the folder's bottom edge, like the renders */
-.hl-screen.hl-live{ justify-content:flex-start; align-items:flex-start; padding:0 0 0 19%; perspective:2200px; perspective-origin:10% 35%; }
-.hl-stage3d{ position:relative; flex:none; transform-origin:50% 60%; }
-/* desktop: a three-quarter view facing the copy. JS writes the transform directly while the chapter hands
-   over (the phone turns further away); this is the resting pose */
-@media (min-width:901px){
-  .hl-stage3d{ transform:rotateY(22deg) rotateX(4deg) rotateZ(-1.5deg); }
-}
-/* the screen lights the folder around it */
+/* the screen lights the folder around it: the footage's colours, blurred to a wash, let through a soft radial mask.
+   The mask carries a fine grain in its alpha (a noise tile, multiplied in): on the dark folder a clean falloff
+   steps in visible rings, and the grain dithers them away at the pixel */
 .hl-glow{
-  position:absolute; z-index:-1; pointer-events:none; left:50%; top:50%; width:150%; aspect-ratio:1; border-radius:50%;
-  transform:translate(-50%, -50%); background:center / cover no-repeat; filter:blur(70px) saturate(1.4); opacity:.72;
+  position:absolute; z-index:-1; pointer-events:none; left:50%; top:50%; width:220%; aspect-ratio:1;
+  transform:translate(-50%, -50%); background:center / cover no-repeat; filter:blur(40px) saturate(1.4); opacity:.72;
+  -webkit-mask-image:
+    radial-gradient(circle closest-side, #000 30%, rgba(0,0,0,.72) 48%, rgba(0,0,0,.42) 64%, rgba(0,0,0,.16) 82%, transparent 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' stitchTiles='stitch' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .16 .84'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23g)'/%3E%3C/svg%3E");
+  mask-image:
+    radial-gradient(circle closest-side, #000 30%, rgba(0,0,0,.72) 48%, rgba(0,0,0,.42) 64%, rgba(0,0,0,.16) 82%, transparent 100%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Cfilter id='g' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='1' stitchTiles='stitch' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .16 .84'/%3E%3C/filter%3E%3Crect width='128' height='128' filter='url(%23g)'/%3E%3C/svg%3E");
+  -webkit-mask-size:100% 100%, 128px 128px; mask-size:100% 100%, 128px 128px;
+  -webkit-mask-composite:source-in; mask-composite:intersect;
 }
-.hl-cam{ --pw:240px; --t:calc(var(--pw) * .0042); flex:none; }
+.hl-cam{ --pw:240px; flex:none; }
 /* device fidelity: anodized orange frame with a chamfer highlight, a thin black bezel, metallic buttons */
 .hl-cam{
   border-radius:calc(var(--pw) * .175); padding:calc(var(--pw) * .0095);
@@ -441,14 +441,6 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
     inset 0 0 0 calc(var(--pw) * .0022) rgba(255,220,196,.8), inset 0 0 0 calc(var(--pw) * .0062) rgba(110,36,8,.42),
     0 calc(var(--pw) * .12) calc(var(--pw) * .3) rgba(0,0,0,.6), 0 calc(var(--pw) * .03) calc(var(--pw) * .06) rgba(0,0,0,.42);
 }
-/* the left wall shows the frame's thickness in the three-quarter view: seven steps darkening toward the back */
-@media (min-width:901px){
-  .hl-cam{ box-shadow:
-    inset 0 0 0 calc(var(--pw) * .0022) rgba(255,220,196,.8), inset 0 0 0 calc(var(--pw) * .0062) rgba(110,36,8,.42),
-    calc(var(--t) * -1) 0 0 #c0561f, calc(var(--t) * -2) 0 0 #b54f1d, calc(var(--t) * -3) 0 0 #aa491b, calc(var(--t) * -4) 0 0 #9f4419,
-    calc(var(--t) * -5) 0 0 #943e17, calc(var(--t) * -6) 0 0 #8a3915, calc(var(--t) * -7) 0 0 #7d3312,
-    calc(var(--pw) * -.06) calc(var(--pw) * .1) calc(var(--pw) * .32) rgba(0,0,0,.62), 0 calc(var(--pw) * .03) calc(var(--pw) * .06) rgba(0,0,0,.42); }
-}
 .hl-cam::before{
   left:calc(var(--pw) * -.0075); width:calc(var(--pw) * .0085); border-radius:calc(var(--pw) * .004) 0 0 calc(var(--pw) * .004);
   background:
@@ -456,7 +448,6 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
     linear-gradient(90deg, #7c300d, #e98a4d 55%, #c35a24) 0 23.6% / 100% 6.4% no-repeat,
     linear-gradient(90deg, #7c300d, #e98a4d 55%, #c35a24) 0 31.8% / 100% 6.4% no-repeat;
 }
-@media (min-width:901px){ .hl-cam::before{ left:calc(var(--pw) * -.0075 - var(--t) * 7); } }
 .hl-cam::after{
   right:calc(var(--pw) * -.0075); width:calc(var(--pw) * .0085); top:26%; height:11%;
   background:linear-gradient(270deg, #7c300d, #e98a4d 55%, #c35a24); border-radius:0 calc(var(--pw) * .004) calc(var(--pw) * .004) 0;
@@ -480,20 +471,17 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
 @keyframes hlDy{ from{ --dy:.5%; } to{ --dy:-.4%; } }
 @keyframes hlDr{ from{ rotate:.3deg; } to{ rotate:-.25deg; } }
 .hl-cam .mp-vf video, .hl-cam .vf-seam{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+/* each album has its own footage: the Family clip sits over Mia's and cross-fades in with the bar's new name */
+.hl-cam .mp-vf video{ transition:opacity .3s var(--ease-out); }
+.hl-cam .mp-vf video.off{ opacity:0; }
 /* the loop seam: the clip's last frame dissolves into its first; a touch of blur hides the double exposure */
 .hl-cam .vf-seam{ opacity:0; filter:blur(2px); transition:opacity .35s ease, filter .35s ease; }
 .hl-cam .vf-seam.on{ opacity:1; filter:none; transition:none; }
 /* decorative: the screen takes no touches, so a swipe that starts on it scrolls the page */
 .hl-cam .ip-screen{ pointer-events:none; }
 .hl-cam .mock-pill{ cursor:default; touch-action:auto; }
-/* the app's capture blink (CameraViewModel): in 40 ms ease-in, held 100 ms, out 80 ms ease-out */
-.hl-cam .vf-flash{ transition:opacity 80ms ease-out; }
-.hl-cam .vf-flash.on{ opacity:1; transition:opacity 40ms ease-in; }
 .hl-cam .mp-thumb{ display:block; }
 .hl-cam .mp-thumb canvas{ display:block; width:100%; height:100%; }
-/* the app's shutter press (CameraControlsView): the whole button to .9 over 80 ms ease-in-out */
-.hl-cam .mp-shutter{ transition:transform 80ms ease-in-out; }
-.hl-cam .mp-shutter.press{ transform:scale(.9); }
 .hl-cam .mp-modes span:not(.mp-mode-hl){
   position:relative; z-index:1; flex:1; display:grid; place-items:center;
   font-size:calc(var(--pw) * .03); font-weight:600; letter-spacing:.06em; color:rgba(255,255,255,.55);
@@ -505,13 +493,19 @@ h2 em{ font-family:var(--font-display); font-style:italic; font-weight:600; lett
   margin:calc(var(--pw) * -.0525) 0 0 calc(var(--pw) * -.0525); border-radius:50%; pointer-events:none; opacity:0;
   background:rgba(170,170,176,.42); border:calc(var(--pw) * .0036) solid rgba(255,255,255,.8); box-shadow:0 2px 12px rgba(0,0,0,.28);
 }
-@media (max-width:900px){ .hl-screen.hl-live{ justify-content:center; padding:0; perspective:none; } .hl-glow{ width:135%; top:42%; opacity:.6; } }
+@media (max-width:900px){ .hl-glow{ width:200%; } }
 @media (prefers-reduced-motion: reduce){ .hl-cam .vf-drift{ animation:none; } }
 /* four titles on one row: a half point smaller on the common phones, a point smaller on the smallest */
 @media (max-width:430px){ .ftab-label{ font-size:11.5px; } }
+/* phones under 480px need the whole row for four titles, so the play/pause steps up to sit just above the first
+   ribbon, the disc 10px clear of it; the title makes room */
+@media (max-width:479px){
+  .folder-tabs{ left:var(--tabs-x); }
+  .folder > .hl-play{ top:-50px; }
+  .hl-stage{ gap:72px; }
+}
 @media (max-width:389px){ .ftab-label{ font-size:11px; } }
 @media (max-width:350px){ .ftab-label{ font-size:10px; } }
-@media (min-width:901px){ .hl-controls{ display:none; } }
 .hl-play{ width:44px; height:44px; display:grid; place-items:center; margin-right:-4px; }
 .hl-play .hp-disc{
   width:36px; height:36px; border-radius:50%; display:grid; place-items:center; color:#fff;
@@ -1282,7 +1276,7 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
     --tab-h:66px;
     --tab-w:clamp(205px, 12vw, 304px);
   }
-  .folder-tabs{ left:clamp(16px, 2.2vw, 56px); }
+  .folder{ --tabs-x:clamp(16px, 2.2vw, 56px); }
   .folder-back{ top:calc(var(--tab-h) - 40px); height:105px; }
   .hl-copy h3, .hl-copy p{ font-size:clamp(22px, 1.25vw, 29px); }
   .ftab-label{ font-size:15px; bottom:11px; gap:7px; }
@@ -1347,77 +1341,74 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
 
 <main>
 
-<!-- ================= HIGHLIGHTS — a scroll-driven folder ================= -->
+<!-- ================= HIGHLIGHTS — a folder that turns its own pages ================= -->
 <section class="hl" id="highlights" aria-label="The short version">
-  <div class="hl-track" id="hlTrack">
-    <div class="hl-stage" id="hlStage">
-      <h2 class="serif-h hl-title reveal">The short version.</h2>
+  <div class="hl-stage">
+    <h2 class="serif-h hl-title reveal">The short version.</h2>
 
-      <div class="folder" id="folder">
-        <div class="folder-back" aria-hidden="true"></div>
-        <div class="folder-tabs" role="tablist" aria-label="Highlights" id="folderTabs">
-          <span class="tab-measure" id="tabMeasure" aria-hidden="true"></span>
-        </div>
+    <div class="folder" id="folder">
+      <div class="folder-back" aria-hidden="true"></div>
+      <!-- the rotator's play/pause, first in the tab row -->
+      <button class="hl-play" id="hlPlay" type="button" aria-label="Pause the highlights">
+        <span class="hp-disc">
+          <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="3.5" width="4.6" height="17" rx="1.4"/><rect x="14.4" y="3.5" width="4.6" height="17" rx="1.4"/></svg>
+          <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.6v14.8a1.2 1.2 0 0 0 1.8 1l12-7.4a1.2 1.2 0 0 0 0-2L8.8 3.6A1.2 1.2 0 0 0 7 4.6z"/></svg>
+        </span>
+      </button>
+      <div class="folder-tabs" role="tablist" aria-label="Highlights" id="folderTabs">
+        <span class="tab-measure" id="tabMeasure" aria-hidden="true"></span>
+      </div>
 
-        <div class="folder-body" id="folderBody">
-          <div class="folder-grid">
-            <div class="hl-copy" id="hlCopy">
-              <article role="tabpanel" id="fs-bar" aria-labelledby="ftab-bar">
-                <span class="hl-acc" aria-hidden="true">
-                  <span class="acc-pill">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg>
-                    Mia
-                    <svg width="9" height="11" viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg>
-                  </span>
+      <div class="folder-body" id="folderBody">
+        <div class="folder-grid">
+          <div class="hl-copy" id="hlCopy">
+            <article role="tabpanel" id="fs-bar" aria-labelledby="ftab-bar">
+              <span class="hl-acc" aria-hidden="true">
+                <span class="acc-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg>
+                  Mia
+                  <svg width="9" height="11" viewBox="0 0 24 30" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg>
                 </span>
-                <h3>Your albums, on the&nbsp;camera.</h3>
-                <p>Swipe the Pholio bar to pick one. Every photo you take goes into&nbsp;it.</p>
-              </article>
-              <article role="tabpanel" id="fs-gallery" aria-labelledby="ftab-gallery" hidden>
-                <span class="hl-acc" aria-hidden="true">
-                  <span class="acc-lock"><svg class="acc-lock-solo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a5 5 0 0 0-5 5V10h-.5A2.5 2.5 0 0 0 4 12.5v7A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5v-7a2.5 2.5 0 0 0-2.5-2.5H17V7.5a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0V10H9V7.5z"/></svg></span>
-                </span>
-                <h3>100% local.</h3>
-                <p>All photos and videos are saved to your iPhone's&nbsp;library.</p>
-                <!-- True to the app: no network code of its own (RevenueCat only handles purchases), no login, no analytics or ad SDKs.
-                     "Works offline": capture, saving and browsing need no network; iCloud-only originals download through iOS, as in Photos -->
-                <ul class="hl-facts">
-                  <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Works offline</li>
-                  <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No account</li>
-                  <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No tracking</li>
-                </ul>
-              </article>
-              <article role="tabpanel" id="fs-shared" aria-labelledby="ftab-shared" hidden>
-                <span class="hl-acc" aria-hidden="true">
-                  <span class="acc-lock"><svg class="acc-people" viewBox="0 0 26 24" fill="currentColor" aria-hidden="true"><circle cx="9.2" cy="7.6" r="4.1"/><path d="M1.6 19.4c0-3.5 3.3-6 7.6-6s7.6 2.5 7.6 6c0 .9-.6 1.5-1.5 1.5H3.1c-.9 0-1.5-.6-1.5-1.5z"/><circle cx="18.4" cy="8.4" r="3.3"/><path d="M18.4 13.6c3.6 0 6 2 6 4.9 0 .8-.5 1.3-1.3 1.3h-4.4c.1-.4.2-.8.2-1.3 0-1.8-.8-3.4-2.2-4.6.5-.2 1.1-.3 1.7-.3z"/></svg></span>
-                </span>
-                <h3>One album, the whole family.</h3>
-                <p>Everyone adds photos from their iPhone. They show up on&nbsp;yours.</p>
-              </article>
-              <article role="tabpanel" id="fs-widget" aria-labelledby="ftab-widget" hidden>
-                <span class="hl-acc" aria-hidden="true">
-                  <span class="acc-ctl acc-ctl-lantern"><img src="assets/Lantern.svg" alt=""></span>
-                  <span class="acc-ctl acc-ctl-pholio"><img src="assets/Pholio.svg" alt=""></span>
-                </span>
-                <p>Add Pholio to your Lock Screen and Control Center. The camera is one press away.</p>
-              </article>
-            </div>
+              </span>
+              <h3>Your albums, on the&nbsp;camera.</h3>
+              <p>Swipe the Pholio bar to pick one. Every photo you take goes into&nbsp;it.</p>
+            </article>
+            <article role="tabpanel" id="fs-gallery" aria-labelledby="ftab-gallery" hidden>
+              <span class="hl-acc" aria-hidden="true">
+                <span class="acc-lock"><svg class="acc-lock-solo" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5a5 5 0 0 0-5 5V10h-.5A2.5 2.5 0 0 0 4 12.5v7A2.5 2.5 0 0 0 6.5 22h11a2.5 2.5 0 0 0 2.5-2.5v-7a2.5 2.5 0 0 0-2.5-2.5H17V7.5a5 5 0 0 0-5-5zm-3 5a3 3 0 1 1 6 0V10H9V7.5z"/></svg></span>
+              </span>
+              <h3>100% local.</h3>
+              <p>All photos and videos are saved to your iPhone's&nbsp;library.</p>
+              <!-- True to the app: no network code of its own (RevenueCat only handles purchases), no login, no analytics or ad SDKs.
+                   "Works offline": capture, saving and browsing need no network; iCloud-only originals download through iOS, as in Photos -->
+              <ul class="hl-facts">
+                <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>Works offline</li>
+                <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No account</li>
+                <li><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>No tracking</li>
+              </ul>
+            </article>
+            <article role="tabpanel" id="fs-shared" aria-labelledby="ftab-shared" hidden>
+              <span class="hl-acc" aria-hidden="true">
+                <span class="acc-lock"><svg class="acc-people" viewBox="0 0 26 24" fill="currentColor" aria-hidden="true"><circle cx="9.2" cy="7.6" r="4.1"/><path d="M1.6 19.4c0-3.5 3.3-6 7.6-6s7.6 2.5 7.6 6c0 .9-.6 1.5-1.5 1.5H3.1c-.9 0-1.5-.6-1.5-1.5z"/><circle cx="18.4" cy="8.4" r="3.3"/><path d="M18.4 13.6c3.6 0 6 2 6 4.9 0 .8-.5 1.3-1.3 1.3h-4.4c.1-.4.2-.8.2-1.3 0-1.8-.8-3.4-2.2-4.6.5-.2 1.1-.3 1.7-.3z"/></svg></span>
+              </span>
+              <h3>One album, the whole family.</h3>
+              <p>Everyone adds photos from their iPhone. They show up on&nbsp;yours.</p>
+            </article>
+            <article role="tabpanel" id="fs-widget" aria-labelledby="ftab-widget" hidden>
+              <span class="hl-acc" aria-hidden="true">
+                <span class="acc-ctl acc-ctl-lantern"><img src="assets/Lantern.svg" alt=""></span>
+                <span class="acc-ctl acc-ctl-pholio"><img src="assets/Pholio.svg" alt=""></span>
+              </span>
+              <p>Add Pholio to your Lock Screen and Control Center. The camera is one press away.</p>
+            </article>
+          </div>
 
-            <div class="hl-phone">
-              <div class="hl-mocks" id="hlPhone">
-                <div class="hl-screens" id="hlScreens"></div>
-              </div>
+          <div class="hl-phone">
+            <div class="hl-mocks" id="hlPhone">
+              <div class="hl-screens" id="hlScreens"></div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="hl-controls">
-        <button class="hl-play" id="hlPlay" type="button" aria-label="Pause the highlights">
-          <span class="hp-disc">
-            <svg class="ic-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="3.5" width="4.6" height="17" rx="1.4"/><rect x="14.4" y="3.5" width="4.6" height="17" rx="1.4"/></svg>
-            <svg class="ic-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.6v14.8a1.2 1.2 0 0 0 1.8 1l12-7.4a1.2 1.2 0 0 0 0-2L8.8 3.6A1.2 1.2 0 0 0 7 4.6z"/></svg>
-          </span>
-        </button>
       </div>
     </div>
   </div>
@@ -1466,8 +1457,8 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
                 </span></div>
             <div class="cam-screen">
               <div class="mp-vf" aria-hidden="true">
-                <img class="vf-img" id="vfImg" src="assets/album-family.jpg" alt="">
-                <img class="vf-blur" id="vfBlur" src="assets/album-family.jpg" alt="">
+                <img class="vf-img" id="vfImg" src="assets/family-cover.jpg" alt="">
+                <img class="vf-blur" id="vfBlur" src="assets/family-cover.jpg" alt="">
                 <div class="vf-flash" id="vfFlash"></div>
               </div>
               <svg class="mp-flash" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 2L4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg>
@@ -1484,7 +1475,7 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
               <span class="vf-chip rec-chip"><i></i>0:00</span>
               <div class="mp-bottom">
                 <div class="mp-controls">
-                  <button class="mp-thumb" id="mpThumb" aria-label="Album thumbnail"><img id="mpThumbImg" src="assets/album-family.jpg" alt=""></button>
+                  <button class="mp-thumb" id="mpThumb" aria-label="Album thumbnail"><img id="mpThumbImg" src="assets/family-cover.jpg" alt=""></button>
                   <button class="mp-shutter" id="mpShutter" aria-label="Take a photo"><i></i></button>
                   <div class="mp-flip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.2-3M20 15a8 8 0 0 1-14.2 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></div>
                 </div>
@@ -1706,8 +1697,8 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
       <h3>All in the bar. <span class="nobr">Your call what stays.</span></h3>
       <p>Tap the Pholio mark on an album to take it out of the Pholio bar. The album isn't deleted, and you can add it back from the More button in its other corner.</p>
       <div class="imp-bar" id="impBar">
-        <img class="imp-bar-img" id="impBarImg" src="assets/album-family.jpg" alt="" draggable="false">
-        <img class="imp-bar-img" id="impBarImg2" src="assets/album-family.jpg" alt="" draggable="false" style="opacity:0">
+        <img class="imp-bar-img" id="impBarImg" src="assets/family-cover.jpg" alt="" draggable="false">
+        <img class="imp-bar-img" id="impBarImg2" src="assets/family-cover.jpg" alt="" draggable="false" style="opacity:0">
         <p class="imp-bar-empty" id="impBarEmpty" aria-hidden="true">Tap More on an album to add it back.</p>
         <div class="imp-bar-top">
           <div class="mock-pill" id="impPill" role="button" tabindex="0"
@@ -1811,7 +1802,7 @@ html.no-motion .reveal{ opacity:1; transform:none; transition:none; }
       <!-- Replace with the real privacy-policy link before launch -->
       <a href="privacy.html">Privacy policy</a>
       <!-- Free stock licence: required while the placeholder clip is on the page (assets/hl-mia.mp4) -->
-      <span class="footer-credit">Stock video designed by&nbsp;<a href="https://www.magnific.com" rel="noopener">Magnific</a></span>
+      <span class="footer-credit">Stock video designed by&nbsp;<a href="https://www.magnific.com" rel="noopener">Magnific</a>&nbsp;and from&nbsp;<a href="https://mixkit.co" rel="noopener">Mixkit</a></span>
     </div>
   </div>
 </footer>
@@ -2146,8 +2137,8 @@ function attachPillDrag(pill, onCycle, onTap, onMove){
 
 /* ============================================================ DATA */
 const ALBUMS = [
-  { name: "Family", count: "1,164 items", cover: "assets/album-family.jpg",
-    photos: ["assets/album-family.jpg","assets/fam-1.jpg","assets/ph-d75.jpg","assets/fam-3.jpg","assets/fam-4.jpg","assets/fam-2.jpg"] },
+  { name: "Family", count: "1,164 items", cover: "assets/family-cover.jpg",
+    photos: ["assets/family-cover.jpg","assets/family-grass.jpg","assets/family-path.jpg","assets/family-upside.jpg","assets/family-door.jpg","assets/family-meadow.jpg"] },
   { name: "Turkey", count: "512 items", cover: "assets/cover-turcia.jpg",
     photos: ["assets/cover-turcia.jpg","assets/ph-02.0.jpg","assets/ph-05.5.jpg","assets/ph-00.8.jpg","assets/ph-07.5.jpg","assets/hand.jpg"] },
   { name: "Concerts", count: "86 items", cover: "assets/ph-13.6.jpg",
@@ -2182,7 +2173,7 @@ function renderGalleryGrid(grid, photos, onHeart){
   }));
 }
 
-/* ============================================================ HIGHLIGHTS — the folder drives on scroll */
+/* ============================================================ HIGHLIGHTS — the folder turns its own pages */
 const HIGHLIGHTS = [
   { key:"bar",     label:"The Pholio bar", short:"Pholio bar", c1:"#E97344", c2:"#BD491A", rgba:[233,115,68,.17] },
   { key:"gallery", label:"Gallery",        c1:"#40D583", c2:"#38BBD9", rgba:[56,187,217,.15] },
@@ -2192,8 +2183,6 @@ const HIGHLIGHTS = [
 
 (function initHighlights(){
   const N = HIGHLIGHTS.length;
-  const track = document.getElementById("hlTrack");
-  const stage = document.getElementById("hlStage");
   const tabsEl = document.getElementById("folderTabs");
   const measure = document.getElementById("tabMeasure");
   const body = document.getElementById("folderBody");
@@ -2221,7 +2210,7 @@ const HIGHLIGHTS = [
     `<div class="folder-tint" style="background:rgba(${h.rgba[0]},${h.rgba[1]},${h.rgba[2]},${h.rgba[3]})" aria-hidden="true"></div>`).join(""));
   const tints = Array.from(body.querySelectorAll(".folder-tint"));
 
-  /* layout reads happen on resize, never inside the scrub loop */
+  /* layout reads happen on resize, never inside the render loop */
   let layoutW = 240, labelW = [], baseW = [];
   /* phones: four ribbons only fit their titles if they tuck under each other a little less */
   const OVER_NARROW = N > 3 ? .1 : .16;
@@ -2261,7 +2250,7 @@ const HIGHLIGHTS = [
 
   /* ---- screens: one per chapter, keyed like HIGHLIGHTS ---- */
   const MOCKS = {
-    bar:     { live:true, alt:"Pholio's camera filming a girl painting on the living-room floor, with the Mia album in the Pholio bar" },
+    bar:     { live:true, alt:"Pholio's camera filming a girl painting on the living-room floor with the Mia album in the Pholio bar; a swipe on the bar picks Family, and the camera films the family laughing on a bed" },
     gallery: { src:"assets/mockups-02.png", alt:"Three iPhone screens of Pholio's gallery: a paused video, an album's photo grid, and the Library of albums" },
     shared:  { pair:true, alt:"Pholio's Activity page on an iPhone. The first line reads Linda added a photo, in Family, two minutes ago" },
     widget:  { src:"assets/mockups-01.png", alt:"A hand holding an iPhone on the Lock Screen, with the flashlight and Pholio controls at the bottom" },
@@ -2274,10 +2263,10 @@ const HIGHLIGHTS = [
   const IC_FOLDER = `<svg class="ic-folder" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M4 6a2 2 0 0 1 2-2h4l2 2.4h6a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6z"/></svg>`;
   const IC_CHEV = `<svg class="ic-chev" viewBox="0 0 24 30" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10l6-6 6 6M6 20l6 6 6-6"/></svg>`;
   const MP_FLIP = `<span class="mp-flip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9a8 8 0 0 1 14.2-3M20 15a8 8 0 0 1-14.2 3"/><path d="M18 2v4h-4M6 22v-4h4"/></svg></span>`;
-  const CAM = m => `<div class="hl-screen hl-live s-bar"><div class="hl-stage3d"><div class="hl-glow" style="background-image:url(assets/hl-mia.jpg)"></div><div class="iphone hl-cam" role="img" aria-label="${m.alt}"><div class="ip-bezel"><div class="ip-screen" aria-hidden="true"><div class="ip-island"></div>${IP_STATUS}<div class="cam-screen"><div class="mp-vf"><div class="vf-drift"><video muted playsinline preload="none" poster="assets/hl-mia.jpg" src="${forceStatic ? "" : "assets/hl-mia.mp4"}"></video><canvas class="vf-seam"></canvas></div><div class="vf-flash"></div></div>${IC_FLASH}<div class="mp-top"><span class="mock-pill">${IC_FOLDER}<span class="pill-label-clip"><span class="pill-label">Mia</span></span>${IC_CHEV}</span></div><div class="mp-bottom"><div class="mp-controls"><span class="mp-thumb"><canvas></canvas></span><span class="mp-shutter"><i></i></span>${MP_FLIP}</div><div class="mp-modes"><span class="mp-mode-hl"></span><span class="on">PHOTO</span><span>VIDEO</span><span>PORTRAIT</span></div></div></div><span class="hl-touch"></span><div class="ip-home"></div></div></div></div></div></div>`;
+  const CAM = m => `<div class="hl-screen s-bar"><div class="hl-lift"><div class="hl-glow" style="background-image:url(assets/hl-mia.jpg)"></div><div class="hl-tilt"><div class="iphone hl-cam" role="img" aria-label="${m.alt}"><div class="ip-bezel"><div class="ip-screen" aria-hidden="true"><div class="ip-island"></div>${IP_STATUS}<div class="cam-screen"><div class="mp-vf"><div class="vf-drift"><video muted playsinline preload="none" poster="assets/hl-mia.jpg" src="${forceStatic ? "" : "assets/hl-mia.mp4"}"></video><video class="off" muted playsinline preload="none" poster="assets/hl-family.jpg" src="${forceStatic ? "" : "assets/hl-family.mp4"}"></video><canvas class="vf-seam"></canvas></div></div>${IC_FLASH}<div class="mp-top"><span class="mock-pill">${IC_FOLDER}<span class="pill-label-clip"><span class="pill-label">Mia</span></span>${IC_CHEV}</span></div><div class="mp-bottom"><div class="mp-controls"><span class="mp-thumb"><canvas></canvas></span><span class="mp-shutter"><i></i></span>${MP_FLIP}</div><div class="mp-modes"><span class="mp-mode-hl"></span><span class="on">PHOTO</span><span>VIDEO</span><span>PORTRAIT</span></div></div></div><span class="hl-touch"></span><div class="ip-home"></div></div></div></div></div></div></div>`;
   /* chapter 3: the real Activity page from the shared-albums build (cleaned of a debug button), opened from the
      camera's settings when something new arrives: "Linda added a photo" on top */
-  const PAIR = m => `<div class="hl-screen s-shared"><div class="sh-lift"><div class="hl-glow" style="background-image:url(assets/hl-shared-activity.jpg)"></div><div class="sh-tilt"><div class="iphone hl-cam" role="img" aria-label="${m.alt}"><div class="ip-bezel"><div class="ip-screen" aria-hidden="true"><div class="ip-island"></div>${IP_STATUS}<img class="sh-shot" src="assets/hl-shared-activity.jpg" alt="" loading="${forceStatic ? "eager" : "lazy"}" draggable="false"><div class="ip-home"></div></div></div></div></div></div></div>`;
+  const PAIR = m => `<div class="hl-screen s-shared"><div class="hl-lift"><div class="hl-glow" style="background-image:url(assets/hl-shared-activity.jpg)"></div><div class="hl-tilt"><div class="iphone hl-cam" role="img" aria-label="${m.alt}"><div class="ip-bezel"><div class="ip-screen" aria-hidden="true"><div class="ip-island"></div>${IP_STATUS}<img class="sh-shot" src="assets/hl-shared-activity.jpg" alt="" loading="${forceStatic ? "eager" : "lazy"}" draggable="false"><div class="ip-home"></div></div></div></div></div></div></div>`;
   screensEl.innerHTML = HIGHLIGHTS.map(h => {
     const m = MOCKS[h.key];
     return m.live ? CAM(m) : m.pair ? PAIR(m) :
@@ -2286,9 +2275,9 @@ const HIGHLIGHTS = [
   const screens = Array.from(screensEl.children);
   const SHARED = HIGHLIGHTS.findIndex(h => h.key === "shared");
 
-  /* chapter-1 bleed: push the close-up's bottom 26px past the folder's bottom
+  /* chapter-4 bleed: push the render's bottom 26px past the folder's bottom
      edge so the rounded body clips the PNG's raw crop, at every viewport */
-  const bleedImgs = [".s-bar", ".s-widget"].map(c => screensEl.querySelector(`${c} .hl-mock`)).filter(Boolean);
+  const bleedImgs = [".s-widget"].map(c => screensEl.querySelector(`${c} .hl-mock`)).filter(Boolean);
   function setBleed(){
     const fb = body.getBoundingClientRect();
     const st = screensEl.getBoundingClientRect();
@@ -2302,7 +2291,7 @@ const HIGHLIGHTS = [
 
   /* ============================ the renderer: one continuous position drives everything */
   let pos = -1, lastAct = -1;
-  /* the phone rotator's clock (see "phones: the folder turns its own pages" below) */
+  /* the rotator's clock (see "the folder turns its own pages" below) */
   const DWELL = 5000;
   let userPaused = forceStatic || matchMedia("(prefers-reduced-motion: reduce)").matches;
   let folderInView = false, elapsed = userPaused ? DWELL : 0, rotRaf = 0, rotLast = 0;
@@ -2349,12 +2338,12 @@ const HIGHLIGHTS = [
       screens[i].style.opacity = e.toFixed(3);
       if (i === 0 && camApi){
         camApi.show(e > 0, Math.abs(d) < .05);
-        camApi.turn(narrow || noMotion() ? 0 : smooth(Math.max(0, Math.min(1, d))), narrow);
         if (vis <= 0) camApi.rewind();
       }
-      if (i === SHARED && shareApi){
-        shareApi.show(Math.abs(d) < .05);
-        if (vis <= 0) shareApi.rewind();
+      const dev = i === 0 ? barApi : i === SHARED ? shareApi : null;
+      if (dev){
+        dev.show(Math.abs(d) < .05);
+        if (vis <= 0) dev.rewind();
       }
       screens[i].style.transform = `translateY(${(-d * 12).toFixed(1)}px) scale(${(.976 + .024 * e).toFixed(4)})`;
       screens[i].style.visibility = vis <= 0 ? "hidden" : "visible";
@@ -2377,28 +2366,28 @@ const HIGHLIGHTS = [
     /* the device lifts a little as each chapter hands over */
     const frac = p - Math.floor(p);
     /* both terms are continuous and zero at whole chapters — no mid-chapter snap */
-    /* (no wobble on the way out of chapter 1: the live camera already turns) */
-    const wob = Math.floor(p) === 0 ? 0 : Math.sin(frac * Math.PI * 2) * 0.55;
+    const wob = Math.sin(frac * Math.PI * 2) * 0.55;
     phone.style.transform = `translateY(${(-7 * Math.sin(frac * Math.PI)).toFixed(2)}px) rotate(${wob.toFixed(3)}deg)`;
   }
 
-  /* ============================ drivers: scroll on desktop, a tween on the fallback */
+  /* ============================ the driver: a spring tween between chapters */
   const narrowMQ = matchMedia("(max-width:900px)");
   const motionMQ = matchMedia("(prefers-reduced-motion: reduce)");
   const noMotion = () => forceStatic || motionMQ.matches;
-  /* ---- chapter 1: the live camera. Every few seconds a finger takes a photo (the screen blinks and the
-     thumbnail updates) or swipes the Pholio bar between Mia and Family. The clip's end dissolves into
-     its start, so the loop has no visible jump */
+  /* ---- chapter 1: the live camera. Every few seconds a finger swipes the Pholio bar between Mia and Family, and the
+     viewfinder shows that album's footage as the name changes. Each clip's end dissolves into its start, so the loops
+     have no visible jump */
   const camApi = (function liveCam(root){
     if (!root) return null;
-    const v = root.querySelector("video"), seam = root.querySelector(".vf-seam"), flash = root.querySelector(".vf-flash");
+    /* one clip per album, in ALBUMS order. Both roll while the chapter plays (Mia's keeps the story's time); the
+       Family clip sits on top and fades in and out */
+    const vids = Array.from(root.querySelectorAll(".mp-vf video")), v = vids[0], seam = root.querySelector(".vf-seam");
     const label = root.querySelector(".pill-label"), pill = root.querySelector(".mock-pill");
-    const shutter = root.querySelector(".mp-shutter"), thumb = root.querySelector(".mp-thumb canvas");
     const touch = root.querySelector(".hl-touch"), scr = root.querySelector(".ip-screen");
     const ALBUMS = ["Mia", "Family"];
     /* shown: the chapter is visible at all; armed: it has settled, so the scripted finger may act; held: the
        visitor paused the phone rotator */
-    let album = 0, shown = false, armed = false, held = false, inView = false, last = 0, rewound = true;
+    let album = 0, shown = false, armed = false, held = false, inView = false, last = 0, rewound = true, swapT = 0;
     /* a frame drawn "cover" into a canvas, at the canvas's own pixel size */
     function cover(canvas, src, sw, sh){
       const r = canvas.getBoundingClientRect(), dpr = Math.min(3, devicePixelRatio || 1);
@@ -2407,34 +2396,10 @@ const HIGHLIGHTS = [
       const k = Math.max(canvas.width / sw, canvas.height / sh), w = canvas.width / k, h = canvas.height / k;
       try { canvas.getContext("2d").drawImage(src, (sw - w) / 2, (sh - h) / 2, w, h, 0, 0, canvas.width, canvas.height); } catch(e){}
     }
-    /* each album keeps its own newest photo, the way the app's thumbnail follows the selected album */
-    const img = src => { const i = new Image(); i.src = src; return i; };
-    const SEED = [img(v.getAttribute("poster")), img("assets/album-family.jpg")];
-    let shots = SEED.slice();
-    const drawThumb = () => { const s = shots[album]; if (s.naturalWidth || s.width) cover(thumb, s, s.naturalWidth || s.width, s.naturalHeight || s.height); };
-    SEED[0].addEventListener("load", () => { if (album === 0) drawThumb(); });
-    /* where an element's centre sits on the screen, in its own layout space (the 3D turn doesn't move it) */
+    /* where an element's centre sits on the screen, in its own layout space (the entrance doesn't move it) */
     const at = el => { let x = el.offsetWidth / 2, y = el.offsetHeight / 2, n = el; while (n && n !== scr){ x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return [x, y]; };
     const T = (x, y, s) => `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) scale(${s})`;
     const IN = "cubic-bezier(.23,1,.32,1)", TRAVEL = "cubic-bezier(.77,0,.175,1)";
-    /* the finger lands (105 ms), the shutter goes down at 110 ms and the photo is taken on release at 250 ms,
-       as in the app; the finger lifts from 252 ms */
-    function tap(){
-      const [x, y] = at(shutter);
-      touch.animate([
-        { transform:T(x, y, .95), opacity:0, easing:IN }, { transform:T(x, y, 1), opacity:1, offset:.25 },
-        { transform:T(x, y, 1), opacity:1, offset:.6, easing:IN }, { transform:T(x, y, .95), opacity:0 }], { duration:420, easing:"linear" });
-      setTimeout(() => {
-        shutter.classList.add("press");
-        setTimeout(() => {
-          shutter.classList.remove("press");
-          flash.classList.add("on"); setTimeout(() => flash.classList.remove("on"), 140);
-          const c = document.createElement("canvas"); c.width = v.videoWidth; c.height = v.videoHeight;
-          try { c.getContext("2d").drawImage(v, 0, 0); shots[album] = c; } catch(e){}
-          drawThumb();
-        }, 140);
-      }, 110);
-    }
     /* the finger drags on the chevron (the whole row takes the drag in the app, so the name stays readable);
        the bar follows it, rubber-banded, and springs back on lift. Down to Family, back up to Mia */
     function swipe(){
@@ -2446,138 +2411,143 @@ const HIGHLIGHTS = [
       pill.animate([
         { transform:"translateY(0)" }, { transform:"translateY(0)", offset:.144, easing:TRAVEL },
         { transform:`translateY(${pull.toFixed(1)}px)`, offset:.56, easing:"cubic-bezier(.32,.72,0,1)" }, { transform:"translateY(0)" }], { duration:700, easing:"linear" });
-      setTimeout(() => { album = 1 - album; cycleLabel(label, ALBUMS[album], down); drawThumb(); }, 240);
+      swapT = setTimeout(() => { album = 1 - album; cycleLabel(label, ALBUMS[album], down); vids[1].classList.toggle("off", album === 0); }, 240);
     }
-    /* seconds into the 6.65 s clip: a photo in Mia, swipe to Family, a photo there, swipe back */
-    const EV = [[1.25, tap], [2.65, swipe], [4.2, tap], [5.75, swipe]];
+    /* seconds into Mia's 6.65 s clip: to Family once the phone has risen into place (inside the rotator's 5 s dwell),
+       back to Mia for anyone who stays */
+    const EV = [[2.6, swipe], [5.3, swipe]];
     v.addEventListener("timeupdate", () => {
       const t = v.currentTime;
       if (t < last) last = 0;
       EV.forEach(([at, fn]) => { if (last < at && t >= at && armed) fn(); });
       last = t;
     });
-    v.addEventListener("ended", () => {
-      cover(seam, v, v.videoWidth, v.videoHeight); seam.classList.add("on");
-      v.currentTime = 0; last = 0;
-      v.play().then(() => requestAnimationFrame(() => seam.classList.remove("on"))).catch(() => seam.classList.remove("on"));
-    });
-    v.addEventListener("playing", () => root.classList.add("rolling"));
-    v.addEventListener("pause", () => root.classList.remove("rolling"));
+    /* only the clip on screen gets the seam; the hidden one just starts over */
+    vids.forEach(c => c.addEventListener("ended", () => {
+      const seen = c === vids[album];
+      if (seen){ cover(seam, c, c.videoWidth, c.videoHeight); seam.classList.add("on"); }
+      c.currentTime = 0;
+      if (c === v) last = 0;
+      c.play().then(() => { if (seen) requestAnimationFrame(() => seam.classList.remove("on")); }).catch(() => seam.classList.remove("on"));
+    }));
+    const roll = () => root.classList.toggle("rolling", vids.some(c => !c.paused));
+    vids.forEach(c => { c.addEventListener("playing", roll); c.addEventListener("pause", roll); });
     const sync = () => {
       const go = shown && inView && !held && !document.hidden && !noMotion();
-      if (go && v.paused) v.play().catch(() => {});
-      else if (!go && !v.paused) v.pause();
+      vids.forEach(c => {
+        if (go && c.paused) c.play().catch(() => {});
+        else if (!go && !c.paused) c.pause();
+      });
     };
     new IntersectionObserver(es => { inView = es[es.length - 1].isIntersecting; sync(); }, { threshold:.3 }).observe(body);
     document.addEventListener("visibilitychange", sync);
     motionMQ.addEventListener?.("change", sync);
-    /* the phone's bottom tenth (modes row, home bar) runs under the folder's edge; the shutter stays in */
-    const stage = root.parentNode;
-    let lastW = 0, lastTurn = -1;
-    function size(){
-      if (narrowMQ.matches && innerWidth === lastW) return;   /* a phone's URL bar collapsing isn't a resize here */
-      lastW = innerWidth;
-      const box = screensEl.getBoundingClientRect(), fb = body.getBoundingClientRect();
-      if (!box.height || !fb.height) return;
-      const narrow = narrowMQ.matches, top = narrow ? 8 : box.height * .06;
-      let pw = (fb.bottom - box.top - top) / .9 * 430 / 932;
-      pw = Math.min(pw, box.width * (narrow ? .74 : .42));
-      root.style.setProperty("--pw", pw.toFixed(1) + "px");
-      stage.style.marginTop = top.toFixed(1) + "px";
-      lastTurn = -1;
-    }
-    addEventListener("resize", size); size();
     return {
       show(on, settled){ armed = on && settled; if (on){ rewound = false; } if (on !== shown){ shown = on; sync(); } },
-      /* written straight to the transform (no inherited custom property per frame). The left wall's
-         thickness grows with the turn the way a real edge does (tan of the angle) */
-      turn(d, narrow){
-        if (narrow){ if (lastTurn !== -2){ stage.style.transform = ""; root.style.removeProperty("--t"); lastTurn = -2; } return; }
-        if (Math.abs(d - lastTurn) < .001) return;
-        lastTurn = d;
-        const deg = 22 + d * 14, pw = root.offsetWidth;
-        stage.style.transform = `rotateY(${deg.toFixed(2)}deg) rotateX(4deg) rotateZ(-1.5deg) translateX(${(-4 * d).toFixed(2)}%)`;
-        root.style.setProperty("--t", (pw * .0042 * Math.tan(deg * Math.PI / 180) / Math.tan(22 * Math.PI / 180)).toFixed(2) + "px");
-      },
-      /* off screen: back to the story's start, so every visit opens on Mia with the first photo to come */
+      /* off screen: back to the story's start, so every visit opens on Mia */
       rewind(){
         if (rewound) return;
         rewound = true;
-        if (!v.paused) v.pause();
-        try { v.currentTime = 0; } catch(e){}
-        last = 0; album = 0; shots = SEED.slice();
-        cycleLabel(label, ALBUMS[0], true, true); drawThumb();
+        vids.forEach(c => { if (!c.paused) c.pause(); try { c.currentTime = 0; } catch(e){} });
+        clearTimeout(swapT);   /* a swipe still under way mustn't land after the reset */
+        last = 0; album = 0;
+        cycleLabel(label, ALBUMS[0], true, true);
+        vids[1].classList.add("off");
       },
       hold(on){ held = on; sync(); },
-      size, sync,
+      sync,
     };
   })(screens[0].querySelector(".hl-cam"));
-  /* ---- chapter 3: the phone's entrance, once per visit when the slide settles. It waits with its top part in view,
-     tipped back on a hinge at its top edge; it swings upright, then rises until the Activity drawer is in view, its
-     top running off the folder and its bottom resting a little above the folder's edge. Off screen it goes back to
-     waiting. Reduce Motion and ?static=1 show the resting pose */
-  const shareApi = (function sharedPhone(root){
+  /* ---- chapters 1 and 3: the chapter's iPhone and its entrance, once per visit when the slide settles in view. Off
+     screen it goes back to waiting. Reduce Motion and ?static=1 show the resting pose. fit() sizes it for the slide
+     (its width and resting top); moves() gives the entrance as [element, waiting pose, resting pose, timing]. The
+     entrance is arrival, not slideshow: pausing the highlights stops the clock and the footage, never a device
+     half-way in (chapter 1's waiting pose is invisible) */
+  function devicePhone(root, fit, moves){
     if (!root) return null;
-    const lift = root.querySelector(".sh-lift"), tilt = root.querySelector(".sh-tilt");
-    const SWING = "cubic-bezier(.22,1,.36,1)", RISE = "cubic-bezier(.65,0,.35,1)";
-    const TIP = "perspective(1800px) rotateX(-34deg)";
-    let drop = 0, played = false, held = false, anims = [];
-    const run = (el, frames, opts) => { const a = el.animate(frames, { fill:"forwards", ...opts }); if (held) a.pause(); anims.push(a); };
+    const lift = root.querySelector(".hl-lift"), tilt = root.querySelector(".hl-tilt");
+    const parts = { screen:root, lift, tilt, cam:root.querySelector(".hl-cam"), glow:root.querySelector(".hl-glow"),
+      face:[".cam-screen", ".ip-status"].map(c => root.querySelector(c)).filter(Boolean) };
+    let steps = [], played = false, settled = false, inView = false, anims = [];
     function size(){
       const box = screensEl.getBoundingClientRect(), fb = body.getBoundingClientRect();
       if (!box.height || !fb.height) return;
-      const narrow = narrowMQ.matches, area = Math.min(box.height, fb.bottom - box.top);
-      /* the bottom 58% of the phone (the whole drawer and the photo above it) fills the slide down to a margin */
-      const rest = area * (narrow ? .95 : .9);
-      const H = rest / .58, pw = Math.min(H * 430 / 932, box.width * (narrow ? .8 : .34));
-      const h = pw * 932 / 430;
-      lift.style.setProperty("--sh-pw", pw.toFixed(1) + "px");
-      lift.style.marginTop = (rest - h).toFixed(1) + "px";                 /* resting: bottom at the margin */
-      drop = Math.max(0, area * (narrow ? .04 : .08) - (rest - h));         /* waiting: top just inside the slide */
+      const narrow = narrowMQ.matches, f = fit(Math.min(box.height, fb.bottom - box.top), box.width, narrow, fb.bottom - box.top);
+      lift.style.setProperty("--hl-pw", f.pw.toFixed(1) + "px");
+      lift.style.marginTop = f.top.toFixed(1) + "px";
+      steps = moves(f, parts, narrow);
       if (!played) before();
     }
-    function before(){
-      anims.forEach(a => a.cancel()); anims = [];
-      lift.style.transform = `translateY(${drop.toFixed(1)}px)`;
-      tilt.style.transform = TIP;
-    }
-    function after(){ anims.forEach(a => a.cancel()); anims = []; lift.style.transform = tilt.style.transform = ""; }
+    /* the resting pose is the stylesheet's: no animations, no inline pose */
+    function rest(){ anims.forEach(a => a.cancel()); anims = []; steps.forEach(([el, from]) => Object.keys(from).forEach(k => { el.style[k] = ""; })); }
+    function before(){ rest(); steps.forEach(([el, from]) => Object.assign(el.style, from)); }
     function play(){
       played = true;
-      if (noMotion()){ after(); return; }
-      run(tilt, [{ transform:TIP }, { transform:"perspective(1800px) rotateX(0deg)" }], { duration:800, delay:120, easing:SWING });
-      run(lift, [{ transform:`translateY(${drop.toFixed(1)}px)` }, { transform:"translateY(0px)" }], { duration:1100, delay:620, easing:RISE });
+      if (noMotion()){ rest(); return; }
+      steps.forEach(([el, from, to, opts]) => anims.push(el.animate([from, to], { fill:"forwards", ...opts })));
+      /* every step ends on the stylesheet's resting pose, so once all have played the effects can go: nothing is
+         left composited over a live video. A cancelled run (rewind, resize) rejects and keeps its waiting pose */
+      Promise.all(anims.map(a => a.finished)).then(rest).catch(() => {});
     }
+    /* it plays where it's seen: chapter 1 is already the slide when the page loads, far above the folder */
+    const go = () => { if (settled && inView && !played) play(); };
+    new IntersectionObserver(es => { inView = es[es.length - 1].isIntersecting; go(); }, { threshold:.5 }).observe(body);
     let lastW = innerWidth;
-    addEventListener("resize", () => { if (narrowMQ.matches && innerWidth === lastW) return; lastW = innerWidth; size(); if (played) after(); });
+    addEventListener("resize", () => { if (narrowMQ.matches && innerWidth === lastW) return; lastW = innerWidth; size(); if (played) rest(); });
     size();
-    if (forceStatic) { played = true; after(); }
+    if (forceStatic) { played = true; rest(); }
     return {
-      show(settled){ if (settled && !played) play(); },
+      show(s){ settled = s; go(); },
       rewind(){ if (!played || forceStatic) return; played = false; before(); },
-      hold(on){ held = on; anims.forEach(a => on ? a.pause() : a.play()); },
       size,
     };
-  })(screens[SHARED]);
-  let live = !narrowMQ.matches && !noMotion();
+  }
+  const INOUT = "cubic-bezier(.65,0,.35,1)";
+  /* ---- the reveal: apple.com's product-page entrance (their StaggeredFadeIn), by its numbers. An item fades in over
+     .9s and rises 30px over .7s, both easeInOutQuad, and items come .15s apart. Here the device is the item, settling
+     from a touch larger (their hero media's scale-in, timed); its screen lights one step later, the light it throws
+     on the folder one more. Each step is [element, waiting pose, resting pose, timing]; the resting pose is always
+     the stylesheet's own */
+  const QUAD = "cubic-bezier(.455,.03,.515,.955)";
+  const barReveal = (f, { lift, cam, glow, face }) => [
+    [lift, { transform:"translateY(30px)" }, { transform:"translateY(0px)" }, { duration:700, easing:QUAD }],
+    [cam, { opacity:0 }, { opacity:1 }, { duration:900, easing:QUAD }],
+    [cam, { transform:"scale(1.08)" }, { transform:"scale(1)" }, { duration:900, easing:QUAD }],
+    ...face.map(el => [el, { opacity:0 }, { opacity:1 }, { duration:900, delay:150, easing:QUAD }]),
+    [glow, { opacity:0 }, { opacity:.45 }, { duration:900, delay:300, easing:QUAD }],
+  ];
+
+
+  /* chapter 1: a big phone beside the copy (under it on phones), its top a little down from the slide's top and the
+     folder's bottom edge cutting it through the lower part of the picture (its top 68% in view): the status bar, the
+     Pholio bar and most of the viewfinder show, the shutter row runs off the edge. The edge cuts through the picture
+     rather than along its bottom, so nothing sits tangent to it */
+  const barApi = devicePhone(screens[0],
+    (area, w, narrow, toEdge) => {
+      const top = narrow ? 8 : toEdge * .09;
+      const ph = Math.min((toEdge - top) / .68, narrow ? w * .8 * 932 / 430 : Infinity);
+      return { top, pw:ph * 430 / 932, ph };
+    },
+    barReveal);
+  /* chapter 3: the bottom 58% of the phone (the whole drawer and the photo above it) fills the slide down to a
+     margin, its top running off the folder. It waits lower with its top part in view, tipped back on a hinge at its
+     top edge; it swings upright, then rises until the Activity drawer is in view */
+  const TIP = "perspective(1800px) rotateX(-34deg)";
+  const shareApi = devicePhone(screens[SHARED],
+    (area, w, narrow) => {
+      const rest = area * (narrow ? .95 : .9);
+      const pw = Math.min(rest / .58 * 430 / 932, w * (narrow ? .8 : .34)), top = rest - pw * 932 / 430;
+      return { pw, top, drop:Math.max(0, area * (narrow ? .04 : .08) - top) };
+    },
+    (f, { lift, tilt }) => [
+      [tilt, { transform:TIP }, { transform:"perspective(1800px) rotateX(0deg)" }, { duration:800, delay:120, easing:"cubic-bezier(.22,1,.36,1)" }],
+      [lift, { transform:`translateY(${f.drop.toFixed(1)}px)` }, { transform:"translateY(0px)" }, { duration:1100, delay:620, easing:INOUT }],
+    ]);
+  /* a layout or motion change re-renders the settled chapter */
   function syncMode(){
-    live = !narrowMQ.matches && !noMotion();
-    track.classList.toggle("live", live);
-    if (live) fromScroll(); else render(Math.round(Math.max(0, pos)));
+    render(Math.round(Math.max(0, pos)));
     showFill(); wake();
   }
-  let raf = 0;
-  function fromScroll(){
-    raf = 0;
-    const usable = track.offsetHeight - stage.offsetHeight;
-    if (usable <= 0) return;
-    const q = Math.min(1, Math.max(0, -track.getBoundingClientRect().top / usable)) * (N - 1);
-    /* dwell: hold 22% of each segment at both chapters before scrubbing between them */
-    const seg = Math.min(N - 2, Math.floor(q)), t = q - seg, HOLD = .22;
-    const t2 = Math.min(1, Math.max(0, (t - HOLD) / (1 - 2 * HOLD)));
-    render(seg + t2);
-  }
-  addEventListener("scroll", () => { if (live && !raf) raf = requestAnimationFrame(fromScroll); }, {passive:true});
   let lastResizeW = innerWidth;
   addEventListener("resize", () => {
     if (narrowMQ.matches && innerWidth === lastResizeW) return;   /* a phone's URL bar collapsing isn't a resize here */
@@ -2604,31 +2574,22 @@ const HIGHLIGHTS = [
       tweenRaf = requestAnimationFrame(step);
     })(last);
   }
-  function goTo(i){
-    if (!live){ tweenTo(i); return; }
-    const usable = track.offsetHeight - stage.offsetHeight;
-    const top = track.getBoundingClientRect().top + scrollY;
-    /* land mid-plateau so the chapter is fully settled at arrival */
-    const HOLD = .22;
-    const target = i === 0 ? HOLD / 2 : i === N - 1 ? (N - 1) - HOLD / 2 : i;
-    scrollTo({ top: top + (target / (N - 1)) * usable, behavior: noMotion() ? "auto" : "smooth" });
-  }
   tabs.forEach((t, i) => {
-    t.addEventListener("click", e => { userPause(); goTo(i); if (e.detail > 0) t.blur(); });
+    t.addEventListener("click", e => { userPause(); tweenTo(i); if (e.detail > 0) t.blur(); });
     t.addEventListener("focus", () => { if (t.matches(":focus-visible")) labels[i].classList.add("focused"); });
     t.addEventListener("blur", () => labels[i].classList.remove("focused"));
     t.addEventListener("keydown", e => {
       if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === "ArrowLeft" || e.key === "ArrowUp") userPause();
-      if (e.key === "ArrowRight" || e.key === "ArrowDown"){ e.preventDefault(); const n = Math.min(N - 1, Math.round(pos) + 1); goTo(n); tabs[n].focus(); }
-      if (e.key === "ArrowLeft" || e.key === "ArrowUp"){ e.preventDefault(); const n = Math.max(0, Math.round(pos) - 1); goTo(n); tabs[n].focus(); }
+      if (e.key === "ArrowRight" || e.key === "ArrowDown"){ e.preventDefault(); const n = Math.min(N - 1, Math.round(pos) + 1); tweenTo(n); tabs[n].focus(); }
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp"){ e.preventDefault(); const n = Math.max(0, Math.round(pos) - 1); tweenTo(n); tabs[n].focus(); }
     });
   });
 
-  /* ============================ phones: the folder turns its own pages, like Apple's highlights
-     gallery. Every DWELL it moves to the next chapter (looping) while it's on screen; the active
-     tab's rule fills as the time runs out. A tap on a tab, or the button, takes over. */
+  /* ============================ the folder turns its own pages, like Apple's highlights gallery.
+     Every DWELL it moves to the next chapter (looping) while it's on screen; the active tab's
+     rule fills as the time runs out. A tap on a tab, or the button, takes over. */
   const playBtn = document.getElementById("hlPlay");
-  const rotates = () => !live && narrowMQ.matches && !forceStatic;
+  const rotates = () => !forceStatic;
   function showFill(){
     const a = Math.round(pos), f = rotates() ? Math.min(1, elapsed / DWELL) : 1;
     fills.forEach((el, i) => { el.style.transform = `scaleX(${i === a ? f.toFixed(3) : 1})`; });
@@ -2653,7 +2614,6 @@ const HIGHLIGHTS = [
     if (!userPaused && elapsed >= DWELL) elapsed = 0;
     paintButton(); wake();
     if (camApi) camApi.hold(userPaused);
-    if (shareApi) shareApi.hold(userPaused);
   });
   new IntersectionObserver(es => { folderInView = es[es.length - 1].isIntersecting; wake(); }, {threshold:.5}).observe(body);
   document.addEventListener("visibilitychange", wake);
@@ -2664,9 +2624,8 @@ const HIGHLIGHTS = [
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measureLayout);
   syncMode();
   render(0);
-  /* chapter 3 sits its phones under its copy, so it measures once the copy is laid out (and again with the fonts) */
-  if (shareApi){ shareApi.size(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(shareApi.size); }
-  if (live) fromScroll();
+  /* on phones the devices sit under their copy, so they measure once the copy is laid out (and again with the fonts) */
+  [barApi, shareApi].forEach(api => { if (!api) return; api.size(); if (document.fonts && document.fonts.ready) document.fonts.ready.then(api.size); });
 })();
 
 /* ============================================================ SCROLL SCRUBS — the hero departs, the photo breathes and blurs */
@@ -3170,7 +3129,7 @@ const HIGHLIGHTS = [
   const pillLabel = document.getElementById("impPillLabel");
   const barCount = document.getElementById("impBarCount");
   const LIB = [
-    { name:"Family",   count:"1,164 items", cover:"assets/album-family.jpg" },
+    { name:"Family",   count:"1,164 items", cover:"assets/family-cover.jpg" },
     { name:"Turkey",   count:"512 items",   cover:"assets/cover-turcia.jpg" },
     { name:"Rome",     count:"248 items",   cover:"assets/album-rome.jpg" },
     { name:"Concerts", count:"86 items",    cover:"assets/ph-13.6.jpg" },
